@@ -55,6 +55,8 @@ class LoginService:
         self.gift_packages = gift_packages
         self.college = college
         self.clock = clock or ServerClock()
+        if economy is not None:
+            economy.world_boss.identity = identity
 
     async def login(self, context: DispatchContext, packet: DecodedPacket) -> OutboundMessage:
         values = C2L_LOGIN.decode(packet.body)
@@ -154,8 +156,16 @@ class LoginService:
         values = {"BaseInfo": base, "favor": [FAVOR_MAP_ENTRY.encode({"Key": hero["id"],
             "Value": FAVOR.encode(favor_state(hero, initial.get(hero["id"], 1)))})
             for hero in snapshot.get("heroes", []) if hero.get("state") == 2]}
+        from .medals import snapshot_value
+        values['MedalSystem'] = snapshot_value(store, player['id'], snapshot)
         values.update(snapshot_fields(store, player["id"], snapshot,
                                      int(time.time()) if now is None else now))
+        from .world_boss import snapshot_fields as boss_snapshot_fields
+        boss_fields, boss_daily = boss_snapshot_fields(store, player['id'],
+            int(time.time()) if now is None else now)
+        values.update(boss_fields)
+        if boss_daily:
+            values['Daily'] = values.get('Daily', b'') + boss_daily
         if store is not None:
             relic_ids = relic_item_ids()
             owned_relics = [item_id for item_id, quantity in store.db.execute(

@@ -150,6 +150,8 @@ class BattleService:
                             if len(units) == len(counts) and len(units) <= 512:
                                 for unit, count in zip(units, counts):
                                     if 0 < count <= 10_000:
+                                        if self.catalog.sections[section]['Type'] == 7:
+                                            self.economy.endless.observe(context.session.player_id, row['uuid'], 1, unit, count)
                                         self.economy.dp.observe(context.session.player_id, chapter,
                                             row["uuid"], "kill", unit, count, report.get("heroId", 0))
                         self.economy._event(context.session.player_id, f"kills:{row['uuid']}", 1, 0, total)
@@ -255,7 +257,8 @@ class BattleService:
             "favorFullLevel": [False] * len(heroes), "fightTimeLength": fight_seconds}
         try:
             with self.store.db:
-                if carried_artifacts and section_type != 5:
+                if (self.economy and carried_artifacts and section_type != 5
+                        and self.economy.sections.get(section, {}).get("AssistType", {}).get("value") != 1):
                     current = self.store.get(player_id)["snapshot"]
                     changed = False
                     for hero in current.get("heroes", []):
@@ -280,6 +283,8 @@ class BattleService:
                         player_id, row["uuid"], section, request.get("success", False), section_type,
                         request.get("outsideItems", []), request.get("mazeItems", []),
                         carried_heroes)
+                    if section_type == 6:
+                        self.economy.world_boss.finish_battle(player_id,row['uuid'],request.get('success',False),confirmed=True)
                     updated = self.store.get(player_id)["snapshot"]
                     values.update(roleExp=updated.get("exp", 0), roleLevel=updated["level"], UpLevelNum=updated["level"]-snapshot["level"])
                 self.store.db.execute("INSERT INTO battle_receipts VALUES (?,?,?,?)",
@@ -345,9 +350,13 @@ class BattleService:
                      "scene_id": request.get("sceneId", 0), "section_type": static["Type"]})
         except Exception:
             logging.getLogger("x2.battle").exception("264 observation failed")
+        boss_confirmed = False
         if self.economy:
             try:
                 with self.economy.transaction():
+                    if static['Type'] == 6:
+                        boss_confirmed = self.economy.world_boss.confirm_battle(context.session.player_id, entry['uuid'])
+                    self.economy.endless.save(context.session.player_id, entry, request)
                     self.economy.dp.report(context.session.player_id, static["ChapterID"], entry["uuid"], request)
             except Exception:
                 logging.getLogger("x2.battle").exception("264 DP observation failed")
@@ -369,7 +378,8 @@ class BattleService:
             drop_values[0], len(drop_values))
         return OutboundMessage("L2C_FightDropData", {"result": 10, "uuid": entry["uuid"],
             "sign": entry["sign"], "data": DROP_DATA.encode({"dropValues": drop_values,
-                                                             "missionId": section})})
+                                                             "missionId": section})},
+            before_response=self.economy.pushes(context.session.player_id) if boss_confirmed else ())
 
     async def clear_profile(self, context, packet):
         if context.session.player_id is None:
@@ -377,7 +387,10 @@ class BattleService:
         request = BATTLE_SCHEMAS["C2L_DelFightProfile"].decode(packet.body)
         # No resumable profile; a replacement entry handles abandoned-run refunds.
         # Acknowledgement does not settle a fight or delete its audit record.
-        logging.getLogger("x2.battle").info("clear absent battle profile section=%s", request.get("sectionID", 0))
+        if self.economy:
+            with self.economy.transaction():
+                self.store.db.execute('DELETE FROM endless_profiles WHERE player_id=? AND section_id=?', (context.session.player_id,request.get('sectionID',0)))
+        logging.getLogger("x2.battle").info("clear battle profile section=%s", request.get("sectionID", 0))
         return OutboundMessage("L2C_DelFightProfile", {"code": 10, "sectionID": request.get("sectionID", 0)})
 
     async def prepare_main_mission(self, context, packet):
@@ -408,28 +421,44 @@ class BattleService:
         selected = [PROFILE_HERO.decode(raw) for raw in request.get("heros", [])]
         if not 1 <= len(selected) <= 3 or len({h.get("heroId") for h in selected}) != len(selected):
             return reject
+        if request.get('isFromProfile') and self.economy and self.catalog.sections.get(section, {}).get('Type') == 7:
+            saved = self.store.db.execute('SELECT * FROM endless_profiles WHERE player_id=? AND section_id=?', (player['id'],section)).fetchone()
+            if not saved or not self.economy.endless.active_run(saved['run_id'],player['id']):
+                return reject
+            run = self.store.db.execute('SELECT response,team_json FROM battle_entries WHERE uuid=? AND player_id=?', (saved['run_id'],player['id'])).fetchone()
+            if not run or {h.get('heroId') for h in selected} != set(json.loads(run['team_json'])):
+                return reject
+            values = BATTLE_SCHEMAS['L2C_FightData'].decode(run['response'])
+            values['fightDataProfile'] = saved['profile']
+            with self.store.db:
+                self.store.db.execute('UPDATE battle_entries SET created_at=? WHERE uuid=?', (int(time.time()),saved['run_id']))
+                self.store.db.execute('UPDATE economy_runs SET session_id=? WHERE uuid=?', (context.session.session_id,saved['run_id']))
+            return OutboundMessage('L2C_FightData', values, pushes=self.economy.pushes(player['id']))
         from .progression import battle_hero_base, hero_attributes, hero_skills, catalog
         owned = {h["id"]: h for h in snapshot.get("heroes", [])}
         section_config = self.economy.sections.get(section) if self.economy else None
-        trial_base = None
-        if (section_config and self.catalog.sections.get(section, {}).get("Type") == 0
-                and section_config.get("AssistType", {}).get("value") == 1):
-            trial_units = [unit for unit in section_config.get("AssistParam", []) if unit > 0]
-            if trial_units:
-                trial_base = 1000 + trial_units[0] % 100
+        trial_unit = None
+        if section_config and section_config.get("AssistType", {}).get("value") == 1:
+            trial_unit = next((unit for unit in section_config.get("AssistParam", []) if unit > 0), None)
         heroes = []
         for selected_hero in selected:
             hero_id = selected_hero.get("heroId")
-            hero = owned.get(hero_id)
-            if (trial_base is not None and hero_id in (trial_base, trial_units[0])
-                    and (hero is None or hero.get("state") != 2)):
-                hero = {"id": hero_id, "battle_base_id": trial_base, "state": 2,
-                        "level": min(120, max(1, section_config.get("RecommendedLevel", 1))),
-                        "star": 1, "exp": 0}
+            if trial_unit is not None:
+                from .trial_units import trial_hero
+                hero = trial_hero(trial_unit, hero_id)
+            else:
+                hero = owned.get(hero_id)
             heroes.append(hero)
         if any(not h or h["state"] != 2 or str(h.get("battle_base_id", h["id"])) not in battle_hero_base()
                or not 1 <= h["level"] <= 120 or not 1 <= h["star"] <= 46 for h in heroes):
             return reject
+        key = hashlib.sha256((context.session.session_id + ':' + str(packet.header.request_id)).encode() + packet.body).hexdigest()
+        cached = self.store.db.execute("SELECT response FROM battle_entries WHERE player_id=? AND request_key=?",
+                                      (player["id"], key)).fetchone()
+        if cached:
+            logging.getLogger("x2.battle").info("battle entry replay player=%s section=%s", player["id"], section)
+            return OutboundMessage("L2C_FightData", BATTLE_SCHEMAS["L2C_FightData"].decode(cached[0]),
+                pushes=self.economy.pushes(player['id']) if self.economy else ())
         try:
             entry_context = self.catalog.resolve(player_id=player["id"], request=request,
                 snapshot=snapshot, selected_ids=[h["id"] for h in heroes], store=self.store,
@@ -438,13 +467,14 @@ class BattleService:
             logging.getLogger("x2.battle").info("battle entry denied section=%s reason=%s", section, exc)
             return reject
         chapter, scene = entry_context.chapter_id, entry_context.map_id
-        key = hashlib.sha256((context.session.session_id + ':' + str(packet.header.request_id)).encode() + packet.body).hexdigest()
-        cached = self.store.db.execute("SELECT response FROM battle_entries WHERE player_id=? AND request_key=?",
-                                      (player["id"], key)).fetchone()
-        if cached:
-            logging.getLogger("x2.battle").info("battle entry replay player=%s section=%s", player["id"], section)
-            return OutboundMessage("L2C_FightData", BATTLE_SCHEMAS["L2C_FightData"].decode(cached[0]),
-                pushes=self.economy.pushes(player['id']) if self.economy else ())
+        if entry_context.section_type == 6 and self.economy:
+            try:
+                resumed=self.economy.world_boss.resume_battle(player['id'],section,[h['id'] for h in heroes])
+            except ValueError as exc:
+                logging.getLogger('x2.battle').info('Boss resume rejected player=%s reason=%s',player['id'],exc)
+                return reject
+            if resumed:
+                return OutboundMessage('L2C_FightData',resumed,pushes=self.economy.pushes(player['id']))
         selected_relics = request.get("selectedRelicList", [])
         if selected_relics:
             from .login import relic_item_ids
@@ -469,9 +499,15 @@ class BattleService:
             from .battle_equipment import battle_equipment
             from .battle_bonuses import artifact_attributes, other_attributes
             try:
-                equipped, suit_effects = battle_equipment(self.store, player['id'], hero)
-                artifact_bonus = artifact_attributes(hero)
-                other_bonus = other_attributes(self.store, player['id'], hero)
+                stat_hero = {**hero, "id": hero.get("battle_base_id", hero["id"])}
+                if hero.get('trial_unit'):
+                    from .trial_units import equipment
+                    equipped, suit_effects = equipment(hero)
+                    other_bonus = {}
+                else:
+                    equipped, suit_effects = battle_equipment(self.store, player['id'], hero)
+                    other_bonus = other_attributes(self.store, player['id'], hero)
+                artifact_bonus = artifact_attributes(stat_hero)
             except (ValueError, KeyError, TypeError) as exc:
                 logging.getLogger('x2.battle').warning(
                     'battle entry denied player=%s hero=%s equipment=%s', player['id'], hero['id'], exc)
@@ -505,7 +541,7 @@ class BattleService:
                 player["id"], section, hero["id"], skin[0] if skin else 0,
                 len(equipped), len(suit_effects), hero_attributes(stat_hero),
                 len(artifact_bonus), other_bonus, self.store.path.resolve())
-            fight_heroes.append(FIGHT_HERO.encode({**hero_values, "heroGodEquip": god_equip, "battleSkinId": skin[0] if skin else 0,
+            fight_heroes.append(FIGHT_HERO.encode({**hero_values, "heroGodEquip": god_equip, "battleSkinId": hero.get("trial_skin", skin[0] if skin else 0),
                 "heroSkill": skills, "heroAttrCount": attrs, "attrAdd": base,
                 "heroEquip": equipped, "equipSuitAttr": suit_effects}))
         # Official chain (ARM64 2026-09-25): BattleInfo.SetSceneInfo copies
@@ -530,6 +566,9 @@ class BattleService:
         values = {"result": 10, "uuid": str(uuid.uuid4()), "sign": secrets.token_bytes(32),
                   "data": data, "fightDataProfile": profile, "playerLevel": snapshot["level"],
                   "monsterInitLevel": self.monster_levels.get(scene, 0)}
+        if self.economy and self.catalog.sections[section].get('Type') == 6:
+            boss_id = self.economy.world_boss.public_bosses(player['id'])
+            values['monsterInitLevel'] = self.economy.world_boss.get_boss(boss_id)['monster_level']
         if selected_relics:
             values["selectedRelicList"] = selected_relics
         logging.getLogger("x2.battle").info(
@@ -543,6 +582,7 @@ class BattleService:
                     for old in self.store.db.execute("SELECT uuid FROM economy_runs WHERE player_id=? AND settled=0", (player["id"],)).fetchall():
                         self.economy.refund_battle(player["id"], old[0])
                         self.store.db.execute("UPDATE economy_runs SET settled=1 WHERE uuid=?", (old[0],))
+                        self.economy.world_boss.finish_battle(player['id'],old[0],False)
                     self.economy.charge_battle(player["id"], values["uuid"], section, entry_context.stamina_cost)
                     ai_cost = 0
                     if request.get('useAIPoint'):
@@ -562,6 +602,9 @@ class BattleService:
                 if self.economy:
                     self.store.db.execute('UPDATE battle_entries SET ai_cost=? WHERE uuid=?',
                                           (ai_cost, values['uuid']))
+                    if entry_context.section_type == 6:
+                        self.economy.world_boss.bind_battle(player['id'], section,
+                            entry_context.hero_ids, values['uuid'])
         except UnresolvedEconomy as exc:
             logging.getLogger("x2.battle").info(
                 "checkout rejected section=%s reason=settle: %s", section, exc)

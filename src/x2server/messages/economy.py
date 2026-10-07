@@ -25,7 +25,7 @@ FINISH_REQUEST = ints("ReqFinishTaskData", "taskId type activityId")
 FINISH_RESULT = S("RspFinishTaskData", (F(1, "code", K.ENUM), F(2, "taskId", K.INT32),
     F(3, "rewardData", K.MESSAGE), F(4, "type", K.ENUM), F(5, "nextTask", K.MESSAGE), F(6, "activityId", K.INT32)))
 ECONOMY_IDS = (("FetchMobilityPower", 134, 137), ("ShopGoods", 221, 225), ("RefreshShop", 220, 224),
-    ("JewelCompose", 144, 147), ("GodEquipJewelDot", 725, 726),
+    ("JewelCompose", 144, 147), ("GodEqupJewelCompose", 215, 216), ("GodEquipJewelDot", 725, 726),
     ("ItemOpt", 111, 112),
     ("BuyGoods", 219, 222), ("QueryGoodsInfo", 301, 302),
     ("QueryReCommendShop", 693, 694), ("PaymentStore", 451, 452),
@@ -35,6 +35,8 @@ ECONOMY_IDS = (("FetchMobilityPower", 134, 137), ("ShopGoods", 221, 225), ("Refr
     # C2L_AcceptFavorTask(list<int> taskIds, GameTaskType type) -> L2C_AcceptFavorTask(code).
     ("AcceptFavorTask", 459, 460))
 ECONOMY_SCHEMAS = {s.name: s for s in (
+    S("C2L_GodEqupJewelCompose", (F(1, "HeroID", K.INT32), F(2, "HoleIsID", K.INT32), F(3, "RecipeID", K.INT32))),
+    S("L2C_GodEqupJewelCompose", (F(1, "result", K.ENUM), F(2, "ID", K.INT32))),
     S("C2L_JewelCompose", (F(1, "RecipeID", K.INT32), F(2, "composeCount", K.INT32))),
     S("L2C_JewelCompose", (F(1, "result", K.ENUM), F(2, "rewardData", K.MESSAGE), F(3, "recipeID", K.INT32))),
     S("C2L_GodEquipJewelDot", (F(1, "heroId", K.INT32),)),
