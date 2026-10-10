@@ -121,23 +121,27 @@ def test_rotation_at_beijing_midnight_and_wraparound(env):
     assert [i for i in active if i in wish.groups["up"]] == wish.groups["up"][:3]
     assert [i for i in active if i in wish.groups["limited"]] == wish.groups["limited"][:1]
     assert [i for i in active if i in wish.groups["jewel"]] == wish.groups["jewel"][:2]
-    assert active[22202] == (WishService.ANCHOR, WishService.ANCHOR + 5 * 86400)
+    assert active[22202] == (WishService.ANCHOR, WishService.ANCHOR + 2 * 86400)
     pools = [CARD_POOL.decode(raw) for raw in wish.values(1)["cardPoolList"]]
     first_up = next(p for p in pools if p["poolId"] == 22202)
     assert first_up["startTime"] == WishService.ANCHOR + 8 * 3600
-    assert first_up["endTime"] == WishService.ANCHOR + 5 * 86400 + 8 * 3600
-    now[0] += 5 * 86400
+    assert first_up["endTime"] == WishService.ANCHOR + 2 * 86400 + 8 * 3600
+    now[0] = WishService.ANCHOR + 2 * 86400 - 1
+    assert 22202 in wish.active_periods()
+    now[0] += 1
     active = wish.active_periods()
     assert [i for i in active if i in wish.groups["up"]] == wish.groups["up"][3:6]
     assert [i for i in active if i in wish.groups["limited"]] == wish.groups["limited"][:1]
-    assert [i for i in active if i in wish.groups["jewel"]] == wish.groups["jewel"][2:4]
-    now[0] = WishService.ANCHOR + 14 * 86400
+    assert [i for i in active if i in wish.groups["jewel"]] == wish.groups["jewel"][:2]
+    now[0] = WishService.ANCHOR + 3 * 86400 - 1
+    assert 22204 in wish.active_periods()
+    now[0] += 1
     assert [i for i in wish.active_periods() if i in wish.groups["limited"]] == wish.groups["limited"][1:2]
-    now[0] = WishService.ANCHOR + 50 * 86400
+    now[0] = WishService.ANCHOR + 20 * 86400
     assert [i for i in wish.active_periods() if i in wish.groups["up"]] == wish.groups["up"][:3]
     now[0] = WishService.ANCHOR + 25 * 86400
     assert [i for i in wish.active_periods() if i in wish.groups["jewel"]] == wish.groups["jewel"][:2]
-    now[0] = WishService.ANCHOR + 42 * 86400
+    now[0] = WishService.ANCHOR + 9 * 86400
     assert [i for i in wish.active_periods() if i in wish.groups["limited"]] == wish.groups["limited"][:1]
 
 

@@ -107,7 +107,8 @@ class WishService:
                 result[self.POOL_ID] = (created, created + 7 * 86400)
         if now < self.ANCHOR:
             return result
-        for kind, days, batch in (("up", 5, 3), ("limited", 14, 1), ("jewel", 5, 2)):
+        # USER_DECISION 2026-10-10: UP rotates every 2 days, limited every 3.
+        for kind, days, batch in (("up", 2, 3), ("limited", 3, 1), ("jewel", 5, 2)):
             ids = self.groups[kind]
             span = days * 86400
             round_index = (now - self.ANCHOR) // span
