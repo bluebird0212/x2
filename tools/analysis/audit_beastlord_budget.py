@@ -32,11 +32,11 @@ for row in tables['SectionTable']:
                  'six_star_item_value_costs': costs,
                  'six_star_only_count_caps': [policy.budget_for(sid)[5] // cost for cost in costs if cost > 0]})
 result = {'sources': sources, 'official_budget_values': 'SERVER_DATA_LOST',
-          'policy': 'USER_DECISION 2026-09-26 LOW=1000/MID=3000/HIGH=5000 per group',
+          'policy': 'USER_DECISION 2026-10-10: beastlord group 100%=3000, official section rate then compatible curve; Battlepass unchanged; other groups retain LOW/MID/HIGH',
           'native_consumer': 'JudgeDropItem 0x1e49838: cumulative weighted value <= dropValues[AddADCGroup]',
           'rows': rows,
-          'conclusion': 'Blood moon and Hui moon both cap group 5 at 5000. This cap does not represent a 440/200 yield ratio; actual counts depend on client candidate rolls, stars, values and kills. No difficulty multiplier is added by the server.',
-          'budget_change': 'none; exact official values are unknown and the existing tier policy is user-approved'}
+          'conclusion': 'First chapter Hui moon group 5=6000; Blood moon=13200 (440/200 value-cap ratio). Other groups stay 5000. Actual yield remains dependent on client candidate rolls, stars, values and kills.',
+          'budget_change': 'USER_DECISION 2026-10-10; exact official server budgets remain unknown'}
 target = ROOT / 'analysis/equipment/beastlord_budget_audit.json'
 target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
 print(json.dumps(rows[-2:]))

@@ -183,7 +183,9 @@ def test_budget_tiers_by_official_difficulty():
     assert policy.tier_for(2110801) == ("MID", False)   # no difficulty -> default MID
     assert policy.budget_for(2130101) == [1000] * 27
     assert policy.budget_for(2130203) == [3000] * 27    # Difficulty4? -> see tier map
-    assert policy.budget_for(2133110) == [5000] * 27
+    expected = [5000] * 27
+    expected[5] = 13200
+    assert policy.budget_for(2133110) == expected
 
 
 def test_resolver_tier_boundaries():
@@ -231,11 +233,13 @@ def test_first_chapter_moon_budget_carriers(env, level, budget):
     entered = asyncio.run(battle.enter(ctx, packet(values)))
     assert entered.values["result"] == 10
     data = FIGHT_DATA.decode(entered.values["data"])
-    assert DROP_DATA.decode(data["dropData"])["dropValues"] == [budget] * 27
+    expected = [budget] * 27
+    expected[5] = 30 * [100, 106, 113, 121, 131, 143, 158, 177, 200, 440][level - 1]
+    assert DROP_DATA.decode(data["dropData"])["dropValues"] == expected
     drops = asyncio.run(battle.drop_data(ctx, packet(
         {"missionId": section, "chapterId": 2010100}, name="C2L_FightDropData")))
     assert drops.values["result"] == 10
-    assert DROP_DATA.decode(drops.values["data"])["dropValues"] == [budget] * 27
+    assert DROP_DATA.decode(drops.values["data"])["dropValues"] == expected
 
 
 @pytest.mark.parametrize("state", ["missing", "expired", "different_mission"])

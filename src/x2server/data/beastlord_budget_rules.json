@@ -1,0 +1,1510 @@
+{
+  "version": "beastlord-3000-20261010",
+  "base_100_percent": 3000,
+  "group": 5,
+  "compatibility_curve_percent": [
+    100,
+    106,
+    113,
+    121,
+    131,
+    143,
+    158,
+    177,
+    200,
+    440
+  ],
+  "approval": "USER_DECISION 2026-10-10: 100%=3000; Battlepass unchanged",
+  "sources": {
+    "SectionTable": {
+      "source": "assets/bin/Data/cca5f3cc8525b59459bdebf586c887fb",
+      "record_count": 3203
+    },
+    "Item": {
+      "source": "assets/bin/Data/e49ddfae661db9147b8823552f01df41",
+      "record_count": 3026
+    }
+  },
+  "coverage": {
+    "sections": 3203,
+    "explicit_beastlord": 2011,
+    "official_rate": 100,
+    "compatibility_curve": 110,
+    "battlepass_unchanged": 1800,
+    "unknown_difficulty_unchanged": 1,
+    "group_only_unchanged": 354,
+    "no_beastlord_unchanged": 838
+  },
+  "sections": {
+    "2110151": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110152": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110153": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110154": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110155": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110156": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110157": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110158": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110159": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110160": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110251": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110252": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110253": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110254": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110255": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110256": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110257": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110258": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110259": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110260": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110351": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110352": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110353": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110354": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110355": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110356": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110357": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110358": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110359": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110360": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110451": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110452": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110453": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110454": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110455": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110456": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110457": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110458": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110459": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110460": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110551": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110552": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110553": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110554": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110555": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110556": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110557": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110558": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110559": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110560": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110651": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110652": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110653": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110654": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110655": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110656": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110657": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110658": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110659": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110660": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110751": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110752": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110753": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110754": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110755": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110756": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110757": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110758": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110759": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110760": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110851": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110852": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110853": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110854": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110855": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110856": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110857": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110858": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110859": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110860": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2110951": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2110952": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2110953": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2110954": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2110955": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2110956": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2110957": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2110958": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2110959": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2110960": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2111151": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2111152": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "compatibility_curve",
+      "difficulty": 2,
+      "section_type": 2
+    },
+    "2111153": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "compatibility_curve",
+      "difficulty": 3,
+      "section_type": 2
+    },
+    "2111154": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "compatibility_curve",
+      "difficulty": 4,
+      "section_type": 2
+    },
+    "2111155": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "compatibility_curve",
+      "difficulty": 5,
+      "section_type": 2
+    },
+    "2111156": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "compatibility_curve",
+      "difficulty": 6,
+      "section_type": 2
+    },
+    "2111157": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "compatibility_curve",
+      "difficulty": 7,
+      "section_type": 2
+    },
+    "2111158": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "compatibility_curve",
+      "difficulty": 8,
+      "section_type": 2
+    },
+    "2111159": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "compatibility_curve",
+      "difficulty": 9,
+      "section_type": 2
+    },
+    "2111160": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 2
+    },
+    "2112751": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "compatibility_curve",
+      "difficulty": 1,
+      "section_type": 2
+    },
+    "2133101": {
+      "percent": 100,
+      "budget": 3000,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133102": {
+      "percent": 106,
+      "budget": 3180,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133103": {
+      "percent": 113,
+      "budget": 3390,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133104": {
+      "percent": 121,
+      "budget": 3630,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133105": {
+      "percent": 131,
+      "budget": 3930,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133106": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133107": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133108": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133109": {
+      "percent": 200,
+      "budget": 6000,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133110": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133201": {
+      "percent": 109,
+      "budget": 3270,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133202": {
+      "percent": 116,
+      "budget": 3480,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133203": {
+      "percent": 123,
+      "budget": 3690,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133204": {
+      "percent": 132,
+      "budget": 3960,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133205": {
+      "percent": 143,
+      "budget": 4290,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133206": {
+      "percent": 157,
+      "budget": 4710,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133207": {
+      "percent": 172,
+      "budget": 5160,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133208": {
+      "percent": 193,
+      "budget": 5790,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133209": {
+      "percent": 214,
+      "budget": 6420,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133210": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133301": {
+      "percent": 120,
+      "budget": 3600,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133302": {
+      "percent": 127,
+      "budget": 3810,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133303": {
+      "percent": 136,
+      "budget": 4080,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133304": {
+      "percent": 146,
+      "budget": 4380,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133305": {
+      "percent": 158,
+      "budget": 4740,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133306": {
+      "percent": 172,
+      "budget": 5160,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133307": {
+      "percent": 190,
+      "budget": 5700,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133308": {
+      "percent": 208,
+      "budget": 6240,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133309": {
+      "percent": 230,
+      "budget": 6900,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133310": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133401": {
+      "percent": 141,
+      "budget": 4230,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133402": {
+      "percent": 149,
+      "budget": 4470,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133403": {
+      "percent": 159,
+      "budget": 4770,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133404": {
+      "percent": 171,
+      "budget": 5130,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133405": {
+      "percent": 185,
+      "budget": 5550,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133406": {
+      "percent": 201,
+      "budget": 6030,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133407": {
+      "percent": 216,
+      "budget": 6480,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133408": {
+      "percent": 236,
+      "budget": 7080,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133409": {
+      "percent": 261,
+      "budget": 7830,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133410": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133501": {
+      "percent": 167,
+      "budget": 5010,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133502": {
+      "percent": 177,
+      "budget": 5310,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133503": {
+      "percent": 188,
+      "budget": 5640,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133504": {
+      "percent": 201,
+      "budget": 6030,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133505": {
+      "percent": 214,
+      "budget": 6420,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133506": {
+      "percent": 229,
+      "budget": 6870,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133507": {
+      "percent": 247,
+      "budget": 7410,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133508": {
+      "percent": 270,
+      "budget": 8100,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133509": {
+      "percent": 300,
+      "budget": 9000,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133510": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133601": {
+      "percent": 198,
+      "budget": 5940,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133602": {
+      "percent": 206,
+      "budget": 6180,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133603": {
+      "percent": 216,
+      "budget": 6480,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133604": {
+      "percent": 229,
+      "budget": 6870,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133605": {
+      "percent": 244,
+      "budget": 7320,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133606": {
+      "percent": 261,
+      "budget": 7830,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133607": {
+      "percent": 282,
+      "budget": 8460,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133608": {
+      "percent": 306,
+      "budget": 9180,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133609": {
+      "percent": 332,
+      "budget": 9960,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133610": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133701": {
+      "percent": 218,
+      "budget": 6540,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133702": {
+      "percent": 227,
+      "budget": 6810,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133703": {
+      "percent": 239,
+      "budget": 7170,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133704": {
+      "percent": 253,
+      "budget": 7590,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133705": {
+      "percent": 270,
+      "budget": 8100,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133706": {
+      "percent": 289,
+      "budget": 8670,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133707": {
+      "percent": 309,
+      "budget": 9270,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133708": {
+      "percent": 332,
+      "budget": 9960,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133709": {
+      "percent": 360,
+      "budget": 10800,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133710": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133801": {
+      "percent": 245,
+      "budget": 7350,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133802": {
+      "percent": 256,
+      "budget": 7680,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133803": {
+      "percent": 270,
+      "budget": 8100,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133804": {
+      "percent": 285,
+      "budget": 8550,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133805": {
+      "percent": 303,
+      "budget": 9090,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133806": {
+      "percent": 320,
+      "budget": 9600,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133807": {
+      "percent": 340,
+      "budget": 10200,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133808": {
+      "percent": 366,
+      "budget": 10980,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133809": {
+      "percent": 400,
+      "budget": 12000,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133810": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2133901": {
+      "percent": 280,
+      "budget": 8400,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2133902": {
+      "percent": 293,
+      "budget": 8790,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2133903": {
+      "percent": 306,
+      "budget": 9180,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2133904": {
+      "percent": 320,
+      "budget": 9600,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2133905": {
+      "percent": 337,
+      "budget": 10110,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2133906": {
+      "percent": 356,
+      "budget": 10680,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2133907": {
+      "percent": 379,
+      "budget": 11370,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2133908": {
+      "percent": 406,
+      "budget": 12180,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2133909": {
+      "percent": 429,
+      "budget": 12870,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2133910": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2134101": {
+      "percent": 280,
+      "budget": 8400,
+      "source": "official_rate",
+      "difficulty": 1,
+      "section_type": 3
+    },
+    "2134102": {
+      "percent": 293,
+      "budget": 8790,
+      "source": "official_rate",
+      "difficulty": 2,
+      "section_type": 3
+    },
+    "2134103": {
+      "percent": 306,
+      "budget": 9180,
+      "source": "official_rate",
+      "difficulty": 3,
+      "section_type": 3
+    },
+    "2134104": {
+      "percent": 320,
+      "budget": 9600,
+      "source": "official_rate",
+      "difficulty": 4,
+      "section_type": 3
+    },
+    "2134105": {
+      "percent": 337,
+      "budget": 10110,
+      "source": "official_rate",
+      "difficulty": 5,
+      "section_type": 3
+    },
+    "2134106": {
+      "percent": 356,
+      "budget": 10680,
+      "source": "official_rate",
+      "difficulty": 6,
+      "section_type": 3
+    },
+    "2134107": {
+      "percent": 379,
+      "budget": 11370,
+      "source": "official_rate",
+      "difficulty": 7,
+      "section_type": 3
+    },
+    "2134108": {
+      "percent": 406,
+      "budget": 12180,
+      "source": "official_rate",
+      "difficulty": 8,
+      "section_type": 3
+    },
+    "2134109": {
+      "percent": 429,
+      "budget": 12870,
+      "source": "official_rate",
+      "difficulty": 9,
+      "section_type": 3
+    },
+    "2134110": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "official_rate",
+      "difficulty": 10,
+      "section_type": 3
+    },
+    "2180001": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180002": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180003": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180004": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180005": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180006": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180007": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180008": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    },
+    "2180009": {
+      "percent": 440,
+      "budget": 13200,
+      "source": "compatibility_curve",
+      "difficulty": 10,
+      "section_type": 18
+    }
+  }
+}

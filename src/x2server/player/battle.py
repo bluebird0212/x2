@@ -37,6 +37,8 @@ class BattleService:
                 player_id INTEGER NOT NULL, request_key TEXT NOT NULL, uuid TEXT NOT NULL,
                 created_at INTEGER NOT NULL, response BLOB NOT NULL,
                 PRIMARY KEY(player_id, request_key))""")
+            store.db.execute("""CREATE TABLE IF NOT EXISTS battle_drop_budget_versions (
+                uuid TEXT PRIMARY KEY, policy_version TEXT NOT NULL)""")
             store.db.execute("""CREATE TABLE IF NOT EXISTS battle_receipts (
                 uuid TEXT PRIMARY KEY, request_hash TEXT NOT NULL,
                 created_at INTEGER NOT NULL, response BLOB NOT NULL)""")
@@ -322,7 +324,9 @@ class BattleService:
         static = self.catalog.sections.get(section)
         if (not static or request.get("chapterId") != static["ChapterID"]):
             return reject_with('static/chapter gate')
-        row = self.store.db.execute("SELECT response, created_at FROM battle_entries WHERE player_id=? ORDER BY rowid DESC LIMIT 1",
+        row = self.store.db.execute("""SELECT e.response,e.created_at,v.policy_version
+            FROM battle_entries e LEFT JOIN battle_drop_budget_versions v ON v.uuid=e.uuid
+            WHERE e.player_id=? ORDER BY e.rowid DESC LIMIT 1""",
                                     (context.session.player_id,)).fetchone()
         if not row or int(time.time()) - row["created_at"] > 3600:
             return reject_with('no/expired battle entry')
@@ -355,14 +359,19 @@ class BattleService:
         # client-side ItemStruct drop rejected (outsideItems stayed empty).
         # Budget VALUES are REVIVAL_COMPATIBILITY tiers
         # (docs/decisions/compatibility/equip_dropvalues_budget.md).
-        drop_values = self.drop_budget.budget_for(section)
-        if self.catalog.sections.get(section, {}).get('Type') == 5:
-            drop_values = [0] * len(drop_values)
+        # Entry wire is the immutable value cap for this run. Repeated 264,
+        # restart, configuration changes and rollback must not replace it or
+        # add another full allowance. The client retains its cumulative ledger.
+        saved_drop = DROP_DATA.decode(FIGHT_DATA.decode(entry['data'])['dropData'])
+        drop_values = saved_drop.get('dropValues', [])
+        if saved_drop.get('missionId') != section or len(drop_values) != 27 or any(value < 0 for value in drop_values):
+            return reject_with('invalid saved budget')
         tier, known = self.drop_budget.tier_for(section)
         logging.getLogger("x2.battle").info(
-            "battle drop query section=%s difficulty=%s tier=%s known=%s budget_per_group=%s budget_groups=%d",
+            "battle drop query section=%s difficulty=%s tier=%s known=%s default_group_budget=%s budget_groups=%d beastlord_budget=%s budget_version=%s",
             section, static.get("DifficultyLevel", 0), tier, known,
-            drop_values[0], len(drop_values))
+            drop_values[0], len(drop_values), drop_values[5],
+            row['policy_version'] or 'legacy-20260926')
         return OutboundMessage("L2C_FightDropData", {"result": 10, "uuid": entry["uuid"],
             "sign": entry["sign"], "data": DROP_DATA.encode({"dropValues": drop_values,
                                                              "missionId": section})},
@@ -586,6 +595,8 @@ class BattleService:
                     VALUES (?,?,?,?,?,?,?,?,?)""", (player["id"], key, values["uuid"], int(time.time()),
                     BATTLE_SCHEMAS["L2C_FightData"].encode(values), entry_context.section_type,
                     entry_context.entry_source, entry_context.map_id, json.dumps(entry_context.hero_ids)))
+                self.store.db.execute('INSERT INTO battle_drop_budget_versions VALUES (?,?)',
+                    (values['uuid'], self.drop_budget.version))
                 if self.economy:
                     self.store.db.execute('UPDATE battle_entries SET ai_cost=? WHERE uuid=?',
                                           (ai_cost, values['uuid']))

@@ -125,7 +125,7 @@
     }
   },
   "official_budget_values": "SERVER_DATA_LOST",
-  "policy": "USER_DECISION 2026-09-26 LOW=1000/MID=3000/HIGH=5000 per group",
+  "policy": "USER_DECISION 2026-10-10: beastlord group 100%=3000, official section rate then compatible curve; Battlepass unchanged; other groups retain LOW/MID/HIGH",
   "native_consumer": "JudgeDropItem 0x1e49838: cumulative weighted value <= dropValues[AddADCGroup]",
   "rows": [
     {
@@ -139,7 +139,7 @@
       ],
       "drop_value_id": 10633101,
       "beastlord_group": 5,
-      "budget": 1000,
+      "budget": 3000,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -148,11 +148,11 @@
         1200
       ],
       "six_star_only_count_caps": [
-        1,
-        1,
-        0,
-        0,
-        0
+        3,
+        3,
+        2,
+        2,
+        2
       ]
     },
     {
@@ -166,7 +166,7 @@
       ],
       "drop_value_id": 10633102,
       "beastlord_group": 5,
-      "budget": 1000,
+      "budget": 3180,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -175,11 +175,11 @@
         1200
       ],
       "six_star_only_count_caps": [
-        1,
-        1,
-        0,
-        0,
-        0
+        3,
+        3,
+        3,
+        2,
+        2
       ]
     },
     {
@@ -193,7 +193,7 @@
       ],
       "drop_value_id": 10633103,
       "beastlord_group": 5,
-      "budget": 1000,
+      "budget": 3390,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -202,11 +202,11 @@
         1200
       ],
       "six_star_only_count_caps": [
-        1,
-        1,
-        0,
-        0,
-        0
+        3,
+        3,
+        3,
+        3,
+        2
       ]
     },
     {
@@ -220,7 +220,7 @@
       ],
       "drop_value_id": 10633104,
       "beastlord_group": 5,
-      "budget": 3000,
+      "budget": 3630,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -229,11 +229,11 @@
         1200
       ],
       "six_star_only_count_caps": [
+        4,
         3,
         3,
-        2,
-        2,
-        2
+        3,
+        3
       ]
     },
     {
@@ -247,7 +247,7 @@
       ],
       "drop_value_id": 10633105,
       "beastlord_group": 5,
-      "budget": 3000,
+      "budget": 3930,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -256,11 +256,11 @@
         1200
       ],
       "six_star_only_count_caps": [
+        4,
         3,
         3,
-        2,
-        2,
-        2
+        3,
+        3
       ]
     },
     {
@@ -274,7 +274,7 @@
       ],
       "drop_value_id": 10633106,
       "beastlord_group": 5,
-      "budget": 3000,
+      "budget": 4290,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -283,11 +283,11 @@
         1200
       ],
       "six_star_only_count_caps": [
+        4,
+        4,
+        4,
         3,
-        3,
-        2,
-        2,
-        2
+        3
       ]
     },
     {
@@ -301,7 +301,7 @@
       ],
       "drop_value_id": 10633107,
       "beastlord_group": 5,
-      "budget": 5000,
+      "budget": 4740,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -311,10 +311,10 @@
       ],
       "six_star_only_count_caps": [
         5,
-        5,
         4,
         4,
-        4
+        4,
+        3
       ]
     },
     {
@@ -328,7 +328,7 @@
       ],
       "drop_value_id": 10633108,
       "beastlord_group": 5,
-      "budget": 5000,
+      "budget": 5310,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -339,7 +339,7 @@
       "six_star_only_count_caps": [
         5,
         5,
-        4,
+        5,
         4,
         4
       ]
@@ -355,7 +355,7 @@
       ],
       "drop_value_id": 10633109,
       "beastlord_group": 5,
-      "budget": 5000,
+      "budget": 6000,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -364,11 +364,11 @@
         1200
       ],
       "six_star_only_count_caps": [
+        6,
+        6,
         5,
         5,
-        4,
-        4,
-        4
+        5
       ]
     },
     {
@@ -382,7 +382,7 @@
       ],
       "drop_value_id": 10633110,
       "beastlord_group": 5,
-      "budget": 5000,
+      "budget": 13200,
       "six_star_item_value_costs": [
         900,
         1000,
@@ -391,14 +391,14 @@
         1200
       ],
       "six_star_only_count_caps": [
-        5,
-        5,
-        4,
-        4,
-        4
+        14,
+        13,
+        12,
+        12,
+        11
       ]
     }
   ],
-  "conclusion": "Blood moon and Hui moon both cap group 5 at 5000. This cap does not represent a 440/200 yield ratio; actual counts depend on client candidate rolls, stars, values and kills. No difficulty multiplier is added by the server.",
-  "budget_change": "none; exact official values are unknown and the existing tier policy is user-approved"
+  "conclusion": "First chapter Hui moon group 5=6000; Blood moon=13200 (440/200 value-cap ratio). Other groups stay 5000. Actual yield remains dependent on client candidate rolls, stars, values and kills.",
+  "budget_change": "USER_DECISION 2026-10-10; exact official server budgets remain unknown"
 }

@@ -5,6 +5,8 @@ Status: ACTIVE（2026-09-26 起改为 LOW/MID/HIGH 分级预算；旧 27×1,000,
 Updated: 2026-09-26
 ---
 # Decision
+2026-10-10更新（已批准）：兽主第5组的适用关卡改用100%=3000，官方每关倍率优先，无倍率现世复刻/新血月使用兼容曲线，战令保持原值；其他26组仍使用下述分档。当前执行规则见[兽主预算倍率](beastlord_budget_scaling_20261010.md)。264刷新使用本场入场持久化的预算，不随配置修改重新给予额度。
+
 战斗掉落预算（两个载体：L2C_FightData 130 的 FightData.dropData、
 L2C_FightDropData 266 应答）按官方 SectionTable.DifficultyLevel 分三档：
 

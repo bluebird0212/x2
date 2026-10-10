@@ -1,4 +1,4 @@
-"""DropValues budget policy — REVIVAL_COMPATIBILITY / USER_DECISION 2026-09-26.
+"""DropValues policy — USER_DECISION 2026-09-26 and 2026-10-10.
 
 The official per-DropValueID budget values are lost with the official server data
 (known_unknowns #1/#2). Revival replaces the former unlimited 27x1,000,000 budget
@@ -9,11 +9,18 @@ Tier classification reuses the OFFICIAL SectionTable.DifficultyLevel axis
 (E_Difficulty1..10; main-story/unknown sections use 0). It is NOT stamina-derived:
 stamina co-varies with difficulty but the tier input is the difficulty ordinal.
 Sections without a difficulty level fall back to MID with telemetry.
+Approved 2026-10-10: only group 5 on exported eligible sections is overridden
+using 100%=3000; official per-section percentages precede a compatibility curve.
+Battlepass, unknown difficulty and unconfirmed equipment sources keep the tiers.
 """
 from __future__ import annotations
 
+import json
+from importlib.resources import files
+
 TIER_BUDGETS = {"LOW": 1000, "MID": 3000, "HIGH": 5000}  # USER_DECISION 2026-09-26
 GROUP_COUNT = 27  # official AddADCGroup universe (Section.DroopLimit2 [0..26])
+BEASTLORD_GROUP = 5
 
 
 class DropBudgetCompatibilityPolicy:
@@ -21,6 +28,9 @@ class DropBudgetCompatibilityPolicy:
         # section_id -> official DifficultyLevel (0 = none/unknown)
         self.difficulty_levels = {int(k): int(v) for k, v in (difficulty_levels or {}).items()}
         self.unknown_hits: set[int] = set()
+        rules = json.loads(files('x2server').joinpath('data/beastlord_budget_rules.json').read_text(encoding='utf8'))
+        self.version = rules['version']
+        self.beastlord_budgets = {int(key): int(row['budget']) for key, row in rules['sections'].items()}
 
     def tier_for(self, section_id: int) -> tuple[str, bool]:
         """Returns (tier, known). LOW <=3, MID 4-6, HIGH >=7; 0/unknown -> MID."""
@@ -36,4 +46,8 @@ class DropBudgetCompatibilityPolicy:
 
     def budget_for(self, section_id: int) -> list[int]:
         tier, _ = self.tier_for(section_id)
-        return [TIER_BUDGETS[tier]] * GROUP_COUNT
+        budgets = [TIER_BUDGETS[tier]] * GROUP_COUNT
+        section_id = int(section_id)
+        if section_id in self.difficulty_levels and section_id in self.beastlord_budgets:
+            budgets[BEASTLORD_GROUP] = self.beastlord_budgets[section_id]
+        return budgets

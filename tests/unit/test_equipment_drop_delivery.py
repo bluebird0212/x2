@@ -76,6 +76,36 @@ def test_star_equals_outside_quality_and_typeid_preserved(env):
     assert len(rows) == 1 and rows[0][1] == 1240001 and rows[0][4] == 5
 
 
+def test_scaled_blood_moon_budget_keeps_equipment_checkout_idempotent(env):
+    store, economy, ctx = env
+    EquipmentService(store, economy)
+    battle = BattleService(store, economy)
+    section = 2133110
+    row = battle.catalog.sections[section]
+    with store.db:
+        for prerequisite in (row.get('OpenParam'), section - 1):
+            if prerequisite:
+                store.db.execute('INSERT OR IGNORE INTO economy_clears VALUES (?,?,?)',
+                                 (1, prerequisite, 'scaled-beastlord-test'))
+    values = request()
+    values.update(missionId=section, chapter=row['ChapterID'], sceneId=row['Maps'][0])
+    entered = asyncio.run(battle.enter(ctx, packet(values)))
+    assert entered.values['result'] == 10
+    budget = DROP_DATA.decode(FIGHT_DATA.decode(entered.values['data'])['dropData'])['dropValues']
+    assert budget[5] == 13200 and budget[0] == 5000
+    req = packet({'checkout': CHECKOUT.encode({'chapterId': row['ChapterID'],
+        'sectionId': section, 'success': True, 'fightTime': 120,
+        'outsideItems': [OUTSIDE_ITEM.encode({'id': 1240001, 'num': 2, 'quality': 6, 'eNum': 0})]})},
+        name='C2L_CheckoutMainMissionSign', request_id=2)
+    result = asyncio.run(battle.checkout(ctx, req))
+    assert result.values['result'] == 10
+    equips = reward_equips(result.values['rewardData'])
+    assert len(equips) == 2 and all(e['star'] == 6 and e['typeId'] == 1240001 for e in equips)
+    assert len(db_instances(store)) == 2
+    assert asyncio.run(battle.checkout(ctx, req)).values == result.values
+    assert len(db_instances(store)) == 2
+
+
 def test_three_star_fixed_three_affixes(env):
     store, economy, ctx, battle = equip_env(env)
     result = checkout_equipment(battle, ctx, ({"id": 1240001, "num": 1, "quality": 3, "eNum": 0},))
