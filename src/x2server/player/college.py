@@ -354,8 +354,8 @@ class CollegeService:
             "code": 10,
             "recipeIdExp": [MISSION_PAIR.encode({"Key": recipe, "Value": exp.get(recipe, 0)})
                             for recipe in recipes],
-            "customeres": [CUSTOMER_INFO.encode(self._customer_for(player_id, pos))
-                           for pos in range(self._customer_count(player_id))],
+            "customeres": [CUSTOMER_INFO.encode(row)
+                           for row in self._customer_rows(player_id)],
             "productionBars": [PRODUCTION_BAR.encode({})],
             "elements": [ELEMENT.encode(row) for row in state['alchemy'].get('elements', [])]
                         or [ELEMENT.encode({'elementId': element, 'num': 0,
@@ -373,14 +373,40 @@ class CollegeService:
     def _customer_count(self, player_id):
         return 5  # MAX_CUSTOMER_NUM and GlobalParamString.AlchemyCustomerNum
 
-    def _customer_for(self, player_id: int, pos_index: int) -> dict:
+    def _customer_rows(self, player_id: int) -> list:
+        """The customer row sitting on each slot, de-duplicated by customerId.
+
+        The base stride keeps the five slots on distinct customers only while the
+        refusal rotations stay aligned; once two rotations diverge, two slots can
+        resolve to the same row, i.e. the same god shows up on two slots.  Walk
+        the slots in order and advance any row already taken to the next free
+        customer, wrapping the official table (38 rows for 5 slots, so a free
+        row always exists).
+        """
         catalog = self._load_catalog()
         customers = catalog["customers"]
         state = self.college.load(player_id) if self.college else initial_state()
+        rotations = state.get('alchemy', {}).get('customer_rotations', {})
+        taken: set = set()
+        rows = []
+        for pos in range(self._customer_count(player_id)):
+            rotation = int(rotations.get(str(pos), 0))
+            index = (player_id * 31 + pos * 17 + 5 + rotation) % len(customers)
+            for _ in range(len(customers)):
+                if customers[index]["customerId"] not in taken:
+                    break
+                index = (index + 1) % len(customers)
+            taken.add(customers[index]["customerId"])
+            rows.append(customers[index])
+        return rows
+
+    def _customer_for(self, player_id: int, pos_index: int) -> dict:
+        catalog = self._load_catalog()
+        state = self.college.load(player_id) if self.college else initial_state()
         rotation = int(state.get('alchemy', {}).get('customer_rotations', {}).get(str(pos_index), 0))
-        # Revival compatibility: advance through the existing official customer
-        # table on refusal; no unrecovered refresh timer or fee is invented.
-        row = customers[(player_id * 31 + pos_index * 17 + 5 + rotation) % len(customers)]
+        # Pick this slot out of the de-duplicated arrangement so a refreshed slot
+        # can never collide with a customer another slot already offers.
+        row = self._customer_rows(player_id)[pos_index]
         element = str(row["like"])
         first = catalog["recipes"][element]["1"]
         second = catalog["recipes"][element]["2"]
