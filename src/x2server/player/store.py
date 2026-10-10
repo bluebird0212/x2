@@ -11,6 +11,36 @@ DEFAULT_SNAPSHOT: dict[str, Any] = {"nickname": "Revival", "level": 1,
     "gold": 0, "crystal": 0, "exp": 0, "show": 0}
 
 
+def validate_snapshot(snapshot: dict[str, Any]) -> None:
+    """Shared shape rules for players.snapshot; used on write and save import."""
+    if not isinstance(snapshot.get("nickname"), str):
+        raise ValueError("nickname must be a string")
+    if type(snapshot.get("level")) is not int or snapshot["level"] < 1:
+        raise ValueError("level must be positive")
+    for name in ("gold", "crystal", "exp", "show", "main_chapter", "main_section"):
+        if name in snapshot and (type(snapshot[name]) is not int or snapshot[name] < 0):
+            raise ValueError(f"{name} must be a nonnegative integer")
+    if "mobility" in snapshot:
+        mobility = snapshot["mobility"]
+        if not isinstance(mobility, dict) or type(mobility.get("power")) is not int or mobility["power"] < 0:
+            raise ValueError("mobility power must be a nonnegative integer")
+        for name in ("shop_power_fetch_time", "section_power_fetch_time", "dbp_next_refresh_time"):
+            if name in mobility and (type(mobility[name]) is not int or mobility[name] < 0):
+                raise ValueError(f"mobility {name} must be a nonnegative integer")
+    if "heroes" in snapshot:
+        heroes = snapshot["heroes"]
+        if not isinstance(heroes, list):
+            raise ValueError("heroes must be a list")
+        ids = set()
+        for hero in heroes:
+            if not isinstance(hero, dict) or any(type(hero.get(name)) is not int or hero[name] < minimum
+                    for name, minimum in (("id", 1), ("state", 0), ("level", 1), ("star", 0))):
+                raise ValueError("hero identity, state, level and star must be nonnegative integers")
+            if hero["id"] in ids:
+                raise ValueError("duplicate hero id")
+            ids.add(hero["id"])
+
+
 class PlayerStore:
     def __init__(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -73,32 +103,7 @@ class PlayerStore:
         self, player_id: int, snapshot: dict[str, Any], expected_revision: int
     ) -> int:
         """Optimistic update; conflicting writes roll back instead of losing progress."""
-        if not isinstance(snapshot.get("nickname"), str):
-            raise ValueError("nickname must be a string")
-        if type(snapshot.get("level")) is not int or snapshot["level"] < 1:
-            raise ValueError("level must be positive")
-        for name in ("gold", "crystal", "exp", "show", "main_chapter", "main_section"):
-            if name in snapshot and (type(snapshot[name]) is not int or snapshot[name] < 0):
-                raise ValueError(f"{name} must be a nonnegative integer")
-        if "mobility" in snapshot:
-            mobility = snapshot["mobility"]
-            if not isinstance(mobility, dict) or type(mobility.get("power")) is not int or mobility["power"] < 0:
-                raise ValueError("mobility power must be a nonnegative integer")
-            for name in ("shop_power_fetch_time", "section_power_fetch_time", "dbp_next_refresh_time"):
-                if name in mobility and (type(mobility[name]) is not int or mobility[name] < 0):
-                    raise ValueError(f"mobility {name} must be a nonnegative integer")
-        if "heroes" in snapshot:
-            heroes = snapshot["heroes"]
-            if not isinstance(heroes, list):
-                raise ValueError("heroes must be a list")
-            ids = set()
-            for hero in heroes:
-                if not isinstance(hero, dict) or any(type(hero.get(name)) is not int or hero[name] < minimum
-                        for name, minimum in (("id", 1), ("state", 0), ("level", 1), ("star", 0))):
-                    raise ValueError("hero identity, state, level and star must be nonnegative integers")
-                if hero["id"] in ids:
-                    raise ValueError("duplicate hero id")
-                ids.add(hero["id"])
+        validate_snapshot(snapshot)
         encoded = json.dumps(snapshot, ensure_ascii=False, allow_nan=False, sort_keys=True)
         with self.db:
             cursor = self.db.execute(
