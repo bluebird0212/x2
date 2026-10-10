@@ -35,8 +35,8 @@ from x2server.player.favor import FavorService
 from x2server.player.appearance import AppearanceService
 from x2server.player.mail import MailService
 from x2server.player.terminal import TerminalService
-from x2server.player.college import CollegeStateRepository
-from x2server.player.system_mail import daily_welfare_watch, deliver_hero_choice
+from x2server.player.college import CollegeService, CollegeStateRepository
+from x2server.player.system_mail import daily_welfare_watch, deliver_hero_choice, deliver_ultimate_causality, deliver_revival_supply
 from x2server.player.tutorial import TutorialService
 from x2server.player.star_chart import StarChartService
 
@@ -60,8 +60,15 @@ async def run(database: Path, seconds: float) -> None:
     choice_minted, choice_failed = deliver_hero_choice(store, clock.now())
     logging.getLogger("x2.system_mail").info(
         "hero choice mail backfill minted=%s failed=%s", choice_minted, choice_failed)
+    causality_minted, causality_failed = deliver_ultimate_causality(store, clock.now())
+    logging.getLogger("x2.system_mail").info(
+        "ultimate causality mail backfill minted=%s failed=%s", causality_minted, causality_failed)
     college = CollegeStateRepository(store, clock)
+    supply_minted, supply_failed = deliver_revival_supply(store, clock.now())
+    logging.getLogger("x2.system_mail").info(
+        "revival supply mail backfill minted=%s failed=%s", supply_minted, supply_failed)
     economy = EconomyService(store, clock=clock.now)
+    college_flows = CollegeService(college, economy=economy)
     star_chart = StarChartService(store, economy)
     equipment = EquipmentService(store, economy)
     wish = WishService(store, economy, clock=clock)
@@ -77,7 +84,7 @@ async def run(database: Path, seconds: float) -> None:
                          mail=mail, gift_packages=gift_packages, college=college)
     http = BootstrapHTTPServer(endpoints.bind_host, endpoints.http_port, identity)
     tcp = X2TCPServer(Settings(tcp_host=endpoints.bind_host, tcp_port=endpoints.game_port, read_timeout=120),
-        Dispatcher({**star_chart.handlers(), **LobbyService(clock, college).handlers(), **TutorialService(store).handlers(), **BirthdayService(store).handlers(), **economy.handlers(), **shop.handlers(), **gift_packages.handlers(), **collection.handlers(), **favor.handlers(), **appearance.handlers(), **appearance_shop.handlers(), **mail.handlers(), **terminal.handlers(), **equipment.handlers(), **wish.handlers(), **ProgressionService(store, economy, appearance).handlers(), **BattleService(store, economy).handlers(), **BattleShopService(store, economy).handlers(), "C2L_HeroAll": HeroService(store).query_all,
+        Dispatcher({**star_chart.handlers(), **LobbyService(clock, college).handlers(), **college_flows.handlers(), **TutorialService(store).handlers(), **BirthdayService(store).handlers(), **economy.handlers(), **shop.handlers(), **gift_packages.handlers(), **collection.handlers(), **favor.handlers(), **appearance.handlers(), **appearance_shop.handlers(), **mail.handlers(), **terminal.handlers(), **equipment.handlers(), **wish.handlers(), **ProgressionService(store, economy, appearance).handlers(), **BattleService(store, economy).handlers(), **BattleShopService(store, economy).handlers(), "C2L_HeroAll": HeroService(store).query_all,
                     "C2L_Login": login.login, "C2L_ReConnect": login.reconnect,
                     "C2L_ServerTableConfig": login.server_config}))
     chat = X2TCPServer(Settings(tcp_host=endpoints.bind_host, tcp_port=endpoints.chat_port, read_timeout=120),
@@ -85,6 +92,7 @@ async def run(database: Path, seconds: float) -> None:
     mail_task = None
     welfare_task = None
     world_boss_task = None
+    college_task = None
 
     async def settle_monthcards(day_start):
         """Pay the month-card allowance at the local midnight, even online."""
@@ -101,6 +109,7 @@ async def run(database: Path, seconds: float) -> None:
         await chat.start()
         mail_task = asyncio.create_task(mail.watch(tcp), name="local-mail-push")
         world_boss_task = asyncio.create_task(economy.world_boss.watch(),name="local-world-boss")
+        college_task = asyncio.create_task(college_flows.upgrades.watch(tcp), name="local-college-upgrades")
         welfare_task = asyncio.create_task(daily_welfare_watch(store, clock.now,
             on_new_day=settle_monthcards), name="local-daily-welfare")
         logging.getLogger("x2.local").info(
@@ -112,7 +121,7 @@ async def run(database: Path, seconds: float) -> None:
         else:
             await asyncio.sleep(seconds)
     finally:
-        for task in (mail_task, welfare_task, world_boss_task):
+        for task in (mail_task, welfare_task, world_boss_task, college_task):
             if task:
                 task.cancel()
                 await asyncio.gather(task, return_exceptions=True)

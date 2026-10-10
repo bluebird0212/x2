@@ -108,7 +108,9 @@ CORE_SCHEMAS = {
         L2C_PREPARE_MAIN_MISSION,
     )
 }
+from x2server.messages.college import COLLEGE_SCHEMAS
 CORE_SCHEMAS.update(LOBBY_SCHEMAS)
+CORE_SCHEMAS.update(COLLEGE_SCHEMAS)
 CORE_SCHEMAS.update(ACHIEVEMENT_SCHEMAS)
 CORE_SCHEMAS.update(MEDAL_SCHEMAS)
 CORE_SCHEMAS.update(WORLD_BOSS_SCHEMAS)
@@ -169,10 +171,21 @@ MOBILITY = ProtoSchema("MobilityProto", (
     ProtoField(3, "SectionPowerFetchTime", FieldKind.INT32),
     ProtoField(4, "DBPNextRefreshTime", FieldKind.INT32),
 ))
+# ModuleStatusProto: per-module open states. CollegeModule.IsCollegeEnable
+# (0x1AF9FF8) enables the base entry only when GrowthBaseStatus == 1.
+MODULE_STATUS = ProtoSchema("ModuleStatusProto", (
+    ProtoField(1, "LightYardStatus", FieldKind.INT32),
+    ProtoField(2, "TaskStatus", FieldKind.INT32),
+    ProtoField(3, "GrowthBaseStatus", FieldKind.INT32),
+    ProtoField(4, "DrawStatus", FieldKind.INT32),
+    ProtoField(5, "ShopStatus", FieldKind.INT32),
+    ProtoField(6, "ClubStatus", FieldKind.INT32),
+))
 PLAYER_DATA = ProtoSchema("PlayerDataProto", (
     ProtoField(1, "BaseInfo", FieldKind.MESSAGE),
     ProtoField(2, "Mobility", FieldKind.MESSAGE),
     ProtoField(3, "Daily", FieldKind.MESSAGE),
+    ProtoField(4, "ModuleStatus", FieldKind.MESSAGE),
     ProtoField(5, "WorldBossSearch", FieldKind.MESSAGE),
     ProtoField(7, "MedalSystem", FieldKind.MESSAGE),
     ProtoField(8, "StarMap", FieldKind.MESSAGE),

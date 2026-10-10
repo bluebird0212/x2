@@ -5,7 +5,8 @@ import json
 from importlib.resources import files
 from .server_clock import ServerClock
 
-from x2server.messages.lobby import LOBBY_IDS, LOBBY_SCHEMAS, growth_base_values, ACTIVITY_DATA, MISSION_PAIR
+from x2server.messages.lobby import (LOBBY_IDS, LOBBY_SCHEMAS, growth_base_values, ACTIVITY_DATA,
+                                     MISSION_PAIR, UNLOCK_EXPLORE_RUIN)
 from x2server.network.dispatcher import DispatchContext, OutboundMessage
 from x2server.protocol.errors import ProtocolError
 from x2server.protocol.registry import CORE_MESSAGE_REGISTRY
@@ -33,7 +34,17 @@ class LobbyService:
                       if self.college else growth_base_values())
             return OutboundMessage("L2C_QueryGrowthBase", growth)
         if name == "C2L_UnlockExploreRuin":
-            return OutboundMessage("L2C_UnlockExploreRuin", {"code": 13})
+            # 623 behaves as a query: native audit 0x1AFE168 replaces the client
+            # ruin cache with a non-null list and shows a bubble for any code
+            # other than 10. Idempotent; no unlock mutation until dispatch lands.
+            ruins = (self.college.unlock_ruins(context.session.player_id)
+                     if self.college else [])
+            # Absent repeated field would decode to a null list client-side;
+            # keep one zero-filled idle ruin entry when none are unlocked.
+            rows = [UNLOCK_EXPLORE_RUIN.encode(row) for row in ruins]
+            return OutboundMessage("L2C_UnlockExploreRuin", {
+                "code": 10,
+                "unlockExploreRuin": rows or [UNLOCK_EXPLORE_RUIN.encode({})]})
         if name == "C2L_QueryWorldBossOpenTime":
             # Main-screen 时序之门 is WorldBoss, not EndlessWeekly.
             # WorldBossModule.OnHandleQueryOpenState treats code=10 as Open;
@@ -87,7 +98,8 @@ class LobbyService:
             "C2L_QuerySimpleActivity": {"code": 208},
             "C2L_QuerySharedMessage": {"code": 10},
             "C2L_AccountBuffData": {"code": 10, "buffId": request.get("buffId", [])},
-            "C2L_ButtonClick": {"code": 10},  # Acknowledge telemetry only; no guide/reward mutation.
+            "C2L_ButtonClick": {"code": 10},
+            "C2L_Logout": {"code": 10},  # Acknowledge telemetry only; no guide/reward mutation.
             "C2L_CheckFightProfile": {"code": 10, "isProfileExist": False,
                                       "isProfileValid": False},  # No saved battle profile.
             "C2L_CommercialShopGoods": {"code": 10, "shopType": request.get("shopType", 0)},

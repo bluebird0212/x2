@@ -64,7 +64,7 @@ def artifact_attributes(hero):
     return GOD_EQUIP_ATTR.encode({'godAttr': attrs, 'jewelAttr': jewels})
 
 
-def other_attributes(store, player_id, hero):
+def other_attributes(store, player_id, hero, clock=None):
     data, attrs = catalog(), Counter()
     for position, level in hero.get('favor_fetters', {}).items():
         row = data['fetters'].get(f"{hero['id']}:{position}")
@@ -79,7 +79,12 @@ def other_attributes(store, player_id, hero):
             attrs[row['attribute']] += row['values'][-1]
     elif store.db.execute("SELECT 1 FROM sqlite_master WHERE name='college_state'").fetchone():
         state = store.db.execute('SELECT state_json FROM college_state WHERE player_id=?', (player_id,)).fetchone()
-        for wonder in json.loads(state[0]).get('wonders', []) if state else []:
+        if state:
+            from .college import CollegeStateRepository
+            # Combat and exploration must see offline completion even if no
+            # College page was opened; never commit an enclosing battle savepoint.
+            state = CollegeStateRepository.settled_existing(store, player_id, clock)
+        for wonder in state.get('wonders', []) if state else []:
             row = data['wonders'].get(str(wonder['buildingId']))
             star, level = wonder.get('buildingStar', 0), wonder.get('buildingLevel', 0)
             if not row or row['origin'] != origin or star == 0:

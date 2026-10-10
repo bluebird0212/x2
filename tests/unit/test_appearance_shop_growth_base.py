@@ -42,11 +42,23 @@ def test_white_night_planet_has_buildings_and_query_reply(env):
     _, _, ctx = env
     data = GROWTH_BASE.decode(GROWTH_BASE.encode(growth_base_values()))
     assert len(data["buildingList"]) == 8
-    assert len(data["civilization"]) == 7
+    assert len(data["civilization"]) == 8
     assert BUILDING_BASE_INFO.decode(data["buildingList"][0]) == {
         "buildingId": 701, "buildingLevel": 1, "buildingStar": 1}
     lobby = LobbyService()
     query = asyncio.run(lobby.query(ctx, packet({}, 1210, "C2L_QueryGrowthBase")))
     assert query.message_name == "L2C_QueryGrowthBase" and len(query.values["buildingList"]) == 8
+    # 2026-10-02: 623 is an idempotent state query (code=10), closing the base
+    # entry instead of answering the fixed error bubble.
     ruin = asyncio.run(lobby.query(ctx, packet({}, 1211, "C2L_UnlockExploreRuin")))
-    assert ruin.message_name == "L2C_UnlockExploreRuin" and ruin.values["code"] == 13
+    assert ruin.message_name == "L2C_UnlockExploreRuin" and ruin.values["code"] == 10
+    from x2server.messages.lobby import UNLOCK_EXPLORE_RUIN
+    assert ruin.values["unlockExploreRuin"] == [UNLOCK_EXPLORE_RUIN.encode({})]
+    repeat = asyncio.run(lobby.query(ctx, packet({}, 1212, "C2L_UnlockExploreRuin")))
+    assert repeat.values == ruin.values
+    from x2server.player.college import CollegeService
+    flows = CollegeService()
+    alchemy = asyncio.run(flows.dispatch(ctx, packet({}, 1213, "C2L_AlchemyMainData")))
+    assert alchemy.message_name == "L2C_AlchemyMainData" and alchemy.values["code"] == 10
+    assert len(alchemy.values["recipeIdExp"]) == 6 and len(alchemy.values["customeres"]) == 5
+    assert len(alchemy.values["elements"]) == 6 and len(alchemy.values["productionBars"]) == 1

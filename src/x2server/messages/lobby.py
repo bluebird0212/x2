@@ -26,6 +26,52 @@ GROWTH_BASE = ProtoSchema("L2C_QueryGrowthBase", (
     F(9, "civilization", K.MESSAGE, repeated=True),
     F(10, "buildQueue", K.MESSAGE), F(11, "wonderQueue", K.MESSAGE),
     F(12, "prayQueue", K.MESSAGE, repeated=True), F(13, "washingCountDay", K.INT32)))
+# Nested College wire types; field numbers follow dump.cs declaration order like
+# GROWTH_BASE. UnlockExploreRuin: queueCount/exp/ruinId (0x10/0x14/0x18).
+UNLOCK_EXPLORE_RUIN = ProtoSchema("UnlockExploreRuin", (F(1, "queueCount", K.INT32),
+    F(2, "exp", K.INT32), F(3, "ruinId", K.INT32)))
+# CustomerInfo/ProductionBar/Element per L2C_AlchemyMainData (591) consumers.
+# Queue/slot row types used by the GrowthBase snapshot. The client's generated
+# deserializer (SilentOrbit) leaves absent repeated/singular fields NULL, so the
+# snapshot always carries zero-filled entries for every list the UI derefs.
+EXPLORE_DATA = ProtoSchema("ExploreData", (F(1, "exploreId", K.INT32),
+    F(2, "exploreStatus", K.INT32), F(3, "fightCapacity", K.INT64),
+    F(4, "exploreEndTime", K.INT32), F(5, "heroList", K.INT32, repeated=True),
+    F(6, "difficulty", K.INT32), F(7, "ruinId", K.INT32)))
+TRAINING_DATA = ProtoSchema("TrainingData", (F(1, "trainingId", K.INT32),
+    F(2, "trainingStatus", K.INT32), F(3, "trainingStartTime", K.INT32),
+    F(4, "trainingEndTime", K.INT32), F(5, "heroId", K.INT32),
+    F(6, "difficulty", K.INT32), F(7, "trainingTime", K.INT32),
+    F(8, "buildID", K.INT32)))
+PRAY_QUEUE = ProtoSchema("PrayQueue", (F(1, "buildingId", K.INT32),
+    F(2, "prayStatus", K.INT32), F(3, "prayStartTime", K.INT32),
+    F(4, "prayEndTime", K.INT32), F(5, "prayItemID", K.INT32),
+    F(6, "prayItemNum", K.INT32), F(7, "prayHeroID", K.INT32)))
+BUILD_QUEUE = ProtoSchema("BuildQueue", (F(1, "buildingId", K.INT32),
+    F(2, "upgradeStatus", K.INT32), F(3, "upgradeStartTime", K.INT32),
+    F(4, "upgradeEndTime", K.INT32)))
+WONDER_QUEUE = ProtoSchema("WonderQueue", (F(1, "buildingId", K.INT32),
+    F(2, "upgradeStatus", K.INT32), F(3, "upgradeStartTime", K.INT32),
+    F(4, "upgradeEndTime", K.INT32)))
+
+def zero_queue_row(schema):
+    """One all-default element so an absent field never decodes to null."""
+    return schema.encode({})
+# Native Serialize 0x38f05a8 writes type at tag 0x18 and itemNum at
+# tag 0x38. Declaration order differs: using itemNum as field 3 made the
+# overhead UI read quantity 1 as the quest type and select its empty icon.
+CUSTOMER_INFO = ProtoSchema("CustomerInfo", (F(1, "questId", K.INT32),
+    F(2, "itemId", K.INT32, repeated=True), F(7, "itemNum", K.INT32, repeated=True),
+    F(3, "type", K.ENUM), F(4, "adviseItemId", K.INT32), F(5, "param", K.INT32),
+    F(6, "result", K.INT32)))
+PRODUCTION_BAR = ProtoSchema("ProductionBar", (F(1, "recipeId", K.INT32),
+    F(2, "endTime", K.INT32), F(3, "buffId", K.INT32, repeated=True)))
+ELEMENT = ProtoSchema("Element", (F(1, "elementId", K.INT32), F(2, "num", K.INT32),
+    F(3, "lastRecoverTime", K.INT32), F(4, "buyTimesDay", K.INT32)))
+ALCHEMY_MAIN = ProtoSchema("L2C_AlchemyMainData", (F(1, "code", K.ENUM),
+    F(2, "recipeIdExp", K.MESSAGE, repeated=True), F(3, "customeres", K.MESSAGE, repeated=True),
+    F(4, "productionBars", K.MESSAGE, repeated=True), F(5, "elements", K.MESSAGE, repeated=True),
+    F(6, "buffType", K.INT32), F(7, "buffCount", K.INT32)))
 
 
 def growth_base_values():
@@ -34,7 +80,12 @@ def growth_base_values():
     state = initial_state()
     return {
         "buildingList": [BUILDING_BASE_INFO.encode(row) for row in state["buildings"]],
-        "civilization": [BUILDING_BASE_INFO.encode(row) for row in state["wonders"]]}
+        "civilization": [BUILDING_BASE_INFO.encode(row) for row in state["wonders"]],
+        "exploreList": [zero_queue_row(EXPLORE_DATA)],
+        "trainingList": [zero_queue_row(TRAINING_DATA)],
+        "prayQueue": [zero_queue_row(PRAY_QUEUE)],
+        "buildQueue": zero_queue_row(BUILD_QUEUE),
+        "wonderQueue": zero_queue_row(WONDER_QUEUE)}
 
 LOBBY_IDS = (
     ("QueryTelInfo", 782, 783), ("SeasonIcon", 999, 1001),
@@ -50,7 +101,7 @@ LOBBY_IDS = (
     ("AccountBuffAutoStop", 885, 886), ("ReceiveGiftRew", 919, 920),
     ("MoonEquip", 964, 965), ("QuerySimpleActivity", 986, 987),
     ("QuerySharedMessage", 653, 654), ("AccountBuffData", 865, 866),
-    ("ButtonClick", 376, 377),
+    ("ButtonClick", 376, 377), ("Logout", 405, 406),
     ("CheckFightProfile", 447, 448), ("CommercialShopGoods", 523, 524),
     ("QueryGiftPackage", 531, 532),
 )
@@ -87,6 +138,7 @@ for name, fields in {
                         F(7, "confiId", K.INT32), F(8, "endTimeSec", K.INT32), F(9, "loginDays", K.INT32)),
     "SystemInfo": (F(1, "code", K.ENUM), F(2, "serverTime", K.INT32)),
     "ButtonClick": (F(1, "code", K.ENUM),),
+    "Logout": (F(1, "code", K.ENUM),),
     "QuerySharedMessage": (F(1, "code", K.ENUM), F(2, "sharedMessageList", K.MESSAGE, repeated=True)),
     "AccountBuffData": (F(1, "code", K.ENUM), F(2, "buffData", K.MESSAGE, repeated=True), F(3, "buffId", K.INT32, repeated=True)),
     "GameTask": (F(1, "code", K.ENUM), F(2, "type", K.ENUM), F(3, "taskList", K.MESSAGE, repeated=True),

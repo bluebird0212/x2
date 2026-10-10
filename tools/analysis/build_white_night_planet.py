@@ -68,6 +68,53 @@ def build_protocol():
     lookup = {(r["direction"], r["message_name"]): r for r in catalog}
     methods = {r["Name"]: r["Address"] for r in json.loads(
         (ROOT.parent / "tools/Il2CppDumper-bin/script.json").read_text(encoding="utf-8"))["ScriptMethod"]}
+    # Server coverage as of 2026-10-02: building and alchemy production enabled.
+    coverage = {
+        "QueryGrowthBase": ("PARTIAL",
+            "Persisted College snapshot: official initial buildings/wonders, relogin-safe"),
+        "UnlockExploreRuin": ("PARTIAL",
+            "Idempotent code=10 query of persisted ruins (initially empty, REVIVAL_COMPAT "
+            "initial state); entry closed 2026-10-02"),
+        "AlchemyMainData": ("PARTIAL",
+            "Persisted production slots, capped element recovery and recipe proficiency; "
+            "five fixed customer query positions; customer transactions deferred"),
+        'BuildingUpgrade': ('IMPLEMENTED', 'Official costs/gates, timed queues and completion pushes'),
+        'BuildStarUP': ('IMPLEMENTED', 'Official ordinary/wonder star gates, unlocks and active battle bonuses'),
+        'BuildCrystalFinish': ('IMPLEMENTED', 'Native 300-second light pricing, atomic payment and completion'),
+        'BuildSpeedUP': ('IMPLEMENTED', 'All five official cards, atomic payment and queue completion'),
+        'HelpPowerSpeedValid': ('PARTIAL', 'Local card-window gate 1/2 implemented; social help deferred'),
+        'HelpPowerSpeed': ('PARTIAL', 'Read-only empty assist response; social help out of scope'),
+        'SingleCustomerInfo': ('PARTIAL', 'Deterministic valid data for all five customer positions'),
+        'MakeItem': ('IMPLEMENTED', 'Official recipe costs/time, unlocked slots, persisted production'),
+        'AlchemyCollect': ('IMPLEMENTED', 'Atomic unique production reward, proficiency and slot release'),
+        'AlchemyOnekeyCollect': ('IMPLEMENTED', 'Validated batch collection and proficiency groups'),
+        'MakIngSpeed': ('IMPLEMENTED', 'Native star energy/light pricing and persisted completion'),
+        'AlchemyBuy': ('IMPLEMENTED', 'Native capped crystal refill, daily energy limits and real light debit'),
+        'AlchemyFinish': ('PARTIAL', 'Atomic trade/refusal, native price toggles and discount favor; other quest kinds refused'),
+        'AlchemyButtonClick': ('PARTIAL', 'Persistent suggestion swap with native energy debit; chat remains refused'),
+        'StartTrain': ('IMPLEMENTED', 'Native heroId field 4, official time/cost, persistent hero occupation'),
+        'CancelTrain': ('IMPLEMENTED', 'Persistent cancellation and hero release'),
+        'FinishTrain': ('IMPLEMENTED', 'Unique XP claim and hero update; user-approved 25 percent XP'),
+        'StartExplore': ('IMPLEMENTED', 'Official party/power/difficulty gates and persistent valid queue'),
+        'CancelExplore': ('IMPLEMENTED', 'Cancellation, energy refund and hero release'),
+        'ExploreSpeed': ('IMPLEMENTED', 'Official light price, atomic debit and persistent end time'),
+        'FinishExplore': ('IMPLEMENTED', 'Unique official reward/ruin XP, capped crystal grants and hero release'),
+        'BuildStartPrayGod': ('IMPLEMENTED', 'Native star gates, official costs/time, daily count and hero occupation'),
+        'BuildCancelPrayGod': ('IMPLEMENTED', 'Prayer symbol refund, persistent cancellation and hero release'),
+        'BuildRewardPrayGod': ('IMPLEMENTED', 'Unique reward, hero release and explicit idle queue per civilization to clear cached claim prompts'),
+        'BuildQuickenPrayGod': ('IMPLEMENTED', 'Official cards, atomic debit, persistent end and completion notification'),
+    }
+    # Flows whose response fields have a direct native read audit.
+    native_audited = {
+        "QueryGrowthBase": "washingCountDay direct; whole object cached as growthData (0x1AF8850)",
+        "UnlockExploreRuin": "code==10 gate; non-null list replaces cache (0x1AFE168)",
+        "FinishExplore": "code/rewardData/ruinId/exp direct reads (0x1AFD670)",
+        "AlchemyMainData": "code==10; five fields + four lists read (0x189CC90)",
+        "AlchemyFinish": "rewardData/posIndex/alchemyType observed (0x189EBD8)",
+        "AlchemyCollect": "code/recipeId/posIndex direct reads (0x189F4C4)",
+        "AlchemyOnekeyCollect": "code/barData observed (0x18A0DCC)",
+        "BuildRewardPrayGod": "code/rewardData direct reads (0x1DB7190)",
+    }
     matrix, gaps = [], []
     for action, name, sender, handler, mutation in FLOWS:
         request, response = lookup[("C2L", name)], lookup[("L2C", name)]
@@ -77,20 +124,21 @@ def build_protocol():
         status = "INDIRECT" if name in ("HelpPowerSpeed", "HelpPowerSpeedValid") else "REAL_SEND"
         send_rva = methods.get(sender)
         handler_rva = methods.get(handler)
+        audit = native_audited.get(name)
+        fields_used = ",".join(response["protobuf_fields"])
+        fields_used += (f" [native read audit: {audit}]" if audit
+                        else " [declared; exact reads pending native field audit]")
         matrix.append({"Action": action, "C2L": "C2L_" + name,
             "C2L ID": request["message_id"], "Send point": sender +
             (f" @ {send_rva:#x}" if send_rva is not None else " @ RVA unresolved"),
             "Request fields": ",".join(request["protobuf_fields"]),
             "L2C": "L2C_" + name, "L2C ID": response["message_id"],
             "Handler": handler + (f" @ {handler_rva:#x}" if handler_rva is not None else " @ RVA unresolved"),
-            "Response fields used": ",".join(response["protobuf_fields"]) + " [declared; exact reads pending native field audit]",
+            "Response fields used": fields_used,
             "Server mutation implied": mutation, "Status": status})
-        coverage = "PARTIAL" if name == "QueryGrowthBase" else "STUB" if name == "UnlockExploreRuin" else "MISSING"
+        current, reason = coverage.get(name, ('REFUSED', 'Handler answers code=13; business rules deferred'))
         gaps.append({"C2L": "C2L_" + name, "C2L ID": request["message_id"],
-            "Current Server": coverage, "Reason": (
-                "Returns fixed level-one buildings; no persisted College state" if coverage == "PARTIAL" else
-                "Returns code 13 without ruin records" if coverage == "STUB" else
-                "No College handler / state transaction"),
+            "Current Server": current, "Reason": reason,
             "Required dependency": mutation})
     for filename, records in (("protocol_matrix.csv", matrix), ("server_gap_matrix.csv", gaps)):
         with (OUT / filename).open("w", encoding="utf-8-sig", newline="") as handle:
@@ -101,6 +149,15 @@ def build_protocol():
 
 
 def build_static():
+    if not UPSTREAM.exists():
+        # Upstream decode cache was removed from the workstation; keep the last
+        # static_catalog.json until tables are re-extracted from the APK.
+        print(f"upstream decoded tables missing at {UPSTREAM}; keeping existing static_catalog.json")
+        return None
+    return _build_static()
+
+
+def _build_static():
     names = {
         "collegebuilding": ("ID", "building definition / unlock / level and star references", ["collegelevel", "collegestarlevel", "language"]),
         "collegelevel": ("BuildID", "building level gates and effects", ["collegebuilding", "item"]),
@@ -159,7 +216,8 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     matrix = build_protocol()
     static = build_static()
-    print(f"{len(matrix)} request flows, {len(static['tables'])} static tables")
+    tables = len(static["tables"]) if static else "kept existing"
+    print(f"{len(matrix)} request flows, {tables} static tables")
 
 
 if __name__ == "__main__":

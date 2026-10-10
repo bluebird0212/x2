@@ -1,0 +1,477 @@
+{
+  "sources": {
+    "Item": {
+      "source": "assets/bin/Data/e49ddfae661db9147b8823552f01df41",
+      "record_count": 3026,
+      "fields": [
+        "ItemID",
+        "NameID",
+        "DescID",
+        "HistoryID",
+        "ItemUseScence",
+        "ItemType",
+        "ItemQuality",
+        "PileCount",
+        "ItemValue",
+        "AddADCGroup",
+        "IMQualityLevel",
+        "DropLimit",
+        "DropLimitParam",
+        "NeedLevel",
+        "ItemShow",
+        "Used",
+        "Purchased",
+        "Gain",
+        "Composed",
+        "Recover",
+        "FunctionEff",
+        "EffData",
+        "Return",
+        "Icon",
+        "EffectIcon",
+        "Model",
+        "Effect",
+        "IfShowName",
+        "DropSound",
+        "PickSound",
+        "QuickBuyID"
+      ]
+    },
+    "CurrencyType": {
+      "source": "assets/bin/Data/d6da1bf7f91c77f4b9ea86da617b6151",
+      "record_count": 46,
+      "fields": [
+        "TpyeId",
+        "LangueID",
+        "Desc",
+        "CurrencyEnu",
+        "ItemID",
+        "Max",
+        "Icon"
+      ]
+    },
+    "GlobalParamString": {
+      "source": "assets/bin/Data/142807a95f45e0d4dbe7cb4d9be057f8"
+    }
+  },
+  "items": [
+    {
+      "ItemID": 1237991,
+      "NameID": 12379911,
+      "DescID": 12379912,
+      "HistoryID": 12379913,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        991
+      ],
+      "Icon": "Alchemy01/Img_1237991",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237992,
+      "NameID": 12379921,
+      "DescID": 12379922,
+      "HistoryID": 12379923,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        992
+      ],
+      "Icon": "Alchemy01/Img_1237992",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237993,
+      "NameID": 12379931,
+      "DescID": 12379932,
+      "HistoryID": 12379933,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        993
+      ],
+      "Icon": "Alchemy01/Img_1237993",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237994,
+      "NameID": 12379941,
+      "DescID": 12379942,
+      "HistoryID": 12379943,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        994
+      ],
+      "Icon": "Alchemy01/Img_1237994",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237995,
+      "NameID": 12379951,
+      "DescID": 12379952,
+      "HistoryID": 12379953,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        995
+      ],
+      "Icon": "Alchemy01/Img_1237995",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237996,
+      "NameID": 12379961,
+      "DescID": 12379962,
+      "HistoryID": 12379963,
+      "ItemUseScence": {
+        "value": 2,
+        "enum": "E_Alchemy"
+      },
+      "ItemType": {
+        "value": 16,
+        "enum": "E_Currency"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "ItemValue": 9999,
+      "IMQualityLevel": 99,
+      "FunctionEff": {
+        "value": 2,
+        "enum": "E_Currency"
+      },
+      "EffData": [
+        996
+      ],
+      "Icon": "Alchemy01/Img_1237996",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    }
+  ],
+  "params": {
+    "AlchemyAdviceParam": "10000|2",
+    "AlchemyCustomerNum": "5",
+    "AlchemyDiscountNum": "500",
+    "AlchemyDiscountParam": "2500|5",
+    "AlchemyExploreParam": "902|720|1",
+    "AlchemyNum": "8",
+    "AlchemyPriceNum": "2000",
+    "AlchemyPriceParam": "5000|15",
+    "Element01": "1800",
+    "Element01Param": "100|100|3",
+    "Element01Pay": "5",
+    "Element02": "1800",
+    "Element02Param": "100|100|3",
+    "Element02Pay": "5",
+    "Element03": "1800",
+    "Element03Param": "100|100|3",
+    "Element03Pay": "5",
+    "Element04": "1800",
+    "Element04Param": "100|100|3",
+    "Element04Pay": "5",
+    "Element05": "1800",
+    "Element05Param": "100|100|3",
+    "Element05Pay": "5",
+    "Element06": "1800",
+    "Element06Param": "100|100|3",
+    "Element06Pay": "5"
+  },
+  "speed_cards": [
+    {
+      "ItemID": 1237831,
+      "NameID": 12378311,
+      "DescID": 12378312,
+      "HistoryID": 12378313,
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      },
+      "ItemType": {
+        "value": 13,
+        "enum": "E_Common"
+      },
+      "ItemQuality": {
+        "value": 1,
+        "enum": "E_White"
+      },
+      "PileCount": 999,
+      "ItemValue": 10,
+      "IMQualityLevel": 10,
+      "ItemShow": {
+        "value": 1,
+        "enum": "E_AllYes"
+      },
+      "FunctionEff": {
+        "value": 8,
+        "enum": "E_SpeedUp"
+      },
+      "EffData": [
+        600
+      ],
+      "Icon": "Item03/Ico_Item_1237831",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237832,
+      "NameID": 12378321,
+      "DescID": 12378322,
+      "HistoryID": 12378323,
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      },
+      "ItemType": {
+        "value": 13,
+        "enum": "E_Common"
+      },
+      "ItemQuality": {
+        "value": 2,
+        "enum": "E_Green"
+      },
+      "PileCount": 999,
+      "ItemValue": 60,
+      "IMQualityLevel": 20,
+      "ItemShow": {
+        "value": 1,
+        "enum": "E_AllYes"
+      },
+      "FunctionEff": {
+        "value": 8,
+        "enum": "E_SpeedUp"
+      },
+      "EffData": [
+        3600
+      ],
+      "Icon": "Item03/Ico_Item_1237832",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237833,
+      "NameID": 12378331,
+      "DescID": 12378332,
+      "HistoryID": 12378333,
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      },
+      "ItemType": {
+        "value": 13,
+        "enum": "E_Common"
+      },
+      "ItemQuality": {
+        "value": 3,
+        "enum": "E_Blue"
+      },
+      "PileCount": 999,
+      "ItemValue": 120,
+      "IMQualityLevel": 30,
+      "ItemShow": {
+        "value": 1,
+        "enum": "E_AllYes"
+      },
+      "FunctionEff": {
+        "value": 8,
+        "enum": "E_SpeedUp"
+      },
+      "EffData": [
+        7200
+      ],
+      "Icon": "Item03/Ico_Item_1237833",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237834,
+      "NameID": 12378341,
+      "DescID": 12378342,
+      "HistoryID": 12378343,
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      },
+      "ItemType": {
+        "value": 13,
+        "enum": "E_Common"
+      },
+      "ItemQuality": {
+        "value": 4,
+        "enum": "E_Purple"
+      },
+      "PileCount": 999,
+      "ItemValue": 300,
+      "IMQualityLevel": 40,
+      "ItemShow": {
+        "value": 1,
+        "enum": "E_AllYes"
+      },
+      "FunctionEff": {
+        "value": 8,
+        "enum": "E_SpeedUp"
+      },
+      "EffData": [
+        14400
+      ],
+      "Icon": "Item03/Ico_Item_1237834",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    },
+    {
+      "ItemID": 1237835,
+      "NameID": 12378351,
+      "DescID": 12378352,
+      "HistoryID": 12378353,
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      },
+      "ItemType": {
+        "value": 13,
+        "enum": "E_Common"
+      },
+      "ItemQuality": {
+        "value": 5,
+        "enum": "E_Orange"
+      },
+      "PileCount": 999,
+      "ItemValue": 600,
+      "IMQualityLevel": 60,
+      "ItemShow": {
+        "value": 1,
+        "enum": "E_AllYes"
+      },
+      "FunctionEff": {
+        "value": 8,
+        "enum": "E_SpeedUp"
+      },
+      "EffData": [
+        28800
+      ],
+      "Icon": "Item03/Ico_Item_1237835",
+      "Model": "",
+      "IfShowName": {
+        "value": 1,
+        "enum": "E_True"
+      }
+    }
+  ]
+}

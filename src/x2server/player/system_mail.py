@@ -11,6 +11,7 @@ WISH_COIN = 1237914  # Item E_Currency, EffData 914
 PURE_CRYSTAL = 1237925
 CAUSALITY_CARD = 1202014  # Client Item.Used 720004 -> 100 power; closest existing card to 120.
 HERO_CHOICE_BOX = 1290005
+ULTIMATE_CAUSALITY_CARD = 1202014
 SENDER = "解神者 Revival"
 
 
@@ -31,6 +32,15 @@ def insert_system_mail(db, player_id, account_id, kind, now):
         source_key = f"hero_choice_1290005:{player_id}"
         title = "自选3★神格赠礼"
         body, rewards = "为您送上1个自选3★神格箱。", {HERO_CHOICE_BOX: 1}
+    elif kind == "ultimate_causality":
+        source_key = f"ultimate_causality_50:{player_id}"
+        title = "终极因果卡赠礼"
+        body, rewards = "为您送上50张终极因果卡，祝您旅途愉快。", {ULTIMATE_CAUSALITY_CARD: 50}
+    elif kind == "revival_supply":
+        source_key = f"revival_supply_200_7200_140:{player_id}"
+        title = "旅途补给赠礼"
+        body, rewards = "为您送上200张终极因果卡、7200光辉和140枚许愿币。", {
+            ULTIMATE_CAUSALITY_CARD: 200, BRILLIANCE: 7200, WISH_COIN: 140}
     else:
         raise ValueError("unknown system mail kind")
     if kind == "welcome":
@@ -59,6 +69,29 @@ def deliver_hero_choice(store, now):
             with store.db:
                 minted += insert_system_mail(store.db, player_id, account_id or player_id,
                                               "hero_choice", int(now))
+        except Exception as exc:
+            failed.append((player_id, str(exc)))
+    return minted, failed
+
+
+def deliver_ultimate_causality(store, now):
+    """One gift per player, including offline and unbound legacy saves."""
+    return deliver_player_gift(store, now, "ultimate_causality")
+
+
+def deliver_revival_supply(store, now):
+    """Independent one-time supply, retaining its key after claim or deletion."""
+    return deliver_player_gift(store, now, "revival_supply")
+
+
+def deliver_player_gift(store, now, kind):
+    minted, failed = 0, []
+    for player_id, account_id in store.db.execute('''SELECT p.id,a.account_id FROM players p
+            LEFT JOIN accounts a ON a.player_id=p.id''').fetchall():
+        try:
+            with store.db:
+                minted += insert_system_mail(store.db, player_id, account_id or player_id,
+                                              kind, int(now))
         except Exception as exc:
             failed.append((player_id, str(exc)))
     return minted, failed

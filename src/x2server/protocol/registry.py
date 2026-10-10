@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from x2server.messages.college import COLLEGE_IDS
 from x2server.messages.lobby import LOBBY_IDS
 from x2server.messages.chat import CHAT_IDS
 from x2server.messages.economy import ECONOMY_IDS
@@ -115,7 +116,10 @@ CORE_MESSAGE_REGISTRY = MessageRegistry(
         MessageEntry("C2L_RequestDrawResult", 381, Direction.CLIENT_TO_SERVER),
         MessageEntry("L2C_RequestDrawResult", 382, Direction.SERVER_TO_CLIENT),
         MessageEntry("L2C_UpdatePlayerLevel", 508, Direction.SERVER_TO_CLIENT),
-        *(entry for name, request_id, response_id in (*LOBBY_IDS, *CHAT_IDS, *ECONOMY_IDS, *FAVOR_IDS, *APPEARANCE_IDS, *MAIL_IDS, *TERMINAL_IDS, *ACHIEVEMENT_IDS) for entry in (
+        MessageEntry("L2C_UpLevelBuildingId", 507, Direction.SERVER_TO_CLIENT),
+        MessageEntry("L2C_TrainingUpdate", 562, Direction.SERVER_TO_CLIENT),
+        MessageEntry("L2C_PrayEnd", 514, Direction.SERVER_TO_CLIENT),
+        *(entry for name, request_id, response_id in (*LOBBY_IDS, *CHAT_IDS, *ECONOMY_IDS, *FAVOR_IDS, *APPEARANCE_IDS, *MAIL_IDS, *TERMINAL_IDS, *ACHIEVEMENT_IDS, *COLLEGE_IDS) for entry in (
             MessageEntry("C2L_" + name, request_id, Direction.CLIENT_TO_SERVER),
             MessageEntry("L2C_" + name, response_id, Direction.SERVER_TO_CLIENT))),
         MessageEntry("L2C_Login", 79, Direction.SERVER_TO_CLIENT),

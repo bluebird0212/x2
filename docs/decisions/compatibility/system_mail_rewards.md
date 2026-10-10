@@ -7,6 +7,10 @@ Official-Behavior: NO
 
 # 系统邮件奖励
 
+2026-10-10 用户再追加独立补给邮件：终极因果卡1202014×200、光辉1237902×7200、许愿币1237914×140。新老玩家每人一次，稳定键`revival_supply_200_7200_140:<player_id>`；不替换50张赠礼，注册、启动补发、登录/重连补漏共享幂等规则，领取/删除不重发。
+
+2026-10-10 用户追加：每位玩家一次50张终极因果卡（1202014，官方名“因果收集卡(终极)”，单张100体力），包括离线老玩家。注册事务、启动补发、登录/重连补漏使用独立稳定键`ultimate_causality_50:<player_id>`，领取或删除后不重发，既有3600光辉/80抽/自选3★与每日福利保持原规则。详见`../college_followup_20261010.md`。
+
 当前邮箱为 PARTIAL：MailData、ReadMail、ReceiveAttachment、ReceiveAllAttachment、DelMail、DelAllMail 已接入；`player_mail` 持久化附件、阅读/领取状态和删除状态。登录时同步 MailData，新邮件可推送。客户端邮件对象需要 id、发件人、标题、正文、状态、时间、附件的 ItemID/数量。附件只在点击领取后通过统一 RewardGrant 入账，与领取标记同一 SQLite 事务；未领取附件不可删除。没有过期机制。
 
 2026-09-28 实机补证：官方 2.4 客户端登录时实际还会 POST `/MailService.GetMailPage`（请求字段 `appid/page/page_num/state/userid`）。最初仅有 TCP `L2C_MailData` 推送，HTTP 路由返回 404；接入 HTTP 后，实机日志又显示客户端 `Authorization` **仅为字面量 `Bearer`（长度 6）**，不附游戏令牌，导致每次列表读取返回 401，玩家 3 的两封数据库邮件无法显示。HTTP `GetMailPage` / `GetMail` 复用 `player_mail`，附件按 `MailModule.GetAttachInfo` 所需的 `attachment/equip/gift` JSON 字符串下发。修复后的实机显示、已读及领取待复测。断线重连路径同时补上当天邮件创建和新信推送。

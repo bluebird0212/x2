@@ -34,7 +34,7 @@ def encode_hero_data(hero: dict) -> bytes:
     fetters = [HERO_FETTER.encode({"posId": row["FettersID"],
         "level": hero.get("favor_fetters", {}).get(str(row["FettersID"]), 0)})
         for row in data["favorabilityfetters"] if row["HeroID"] == hero["id"] and row.get("IsOpen") == 1]
-    return HERO_DATA.encode({**values, "godEquip": god_equip,
+    return HERO_DATA.encode({**values, "Status": hero.get('college_status', 0), "godEquip": god_equip,
         "equips": [INT_PAIR.encode({"Key": e["position"], "Value": e["equip_id"]})
                    for e in hero.get("equips", [])],
         "seasonEquips": [INT_PAIR.encode({"Key": e["position"], "Value": e["equip_id"]})

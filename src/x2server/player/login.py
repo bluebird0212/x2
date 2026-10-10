@@ -8,7 +8,8 @@ from importlib.resources import files
 from typing import Any
 
 from x2server.bootstrap.local_identity import LocalIdentityService
-from x2server.messages.core import C2L_LOGIN, BASE_INFO, MOBILITY, RECONNECT, STRING_PAIR, INT_PAIR
+from x2server.messages.core import (C2L_LOGIN, BASE_INFO, MOBILITY, MODULE_STATUS, RECONNECT,
+                                    STRING_PAIR, INT_PAIR)
 from x2server.messages.favor import FAVOR, FAVOR_MAP_ENTRY
 from .favor import catalog, favor_state
 from x2server.network.dispatcher import DispatchContext, OutboundMessage
@@ -68,6 +69,8 @@ class LoginService:
             self.identity.ensure_welcome_mail(player["id"], now)
             self.identity.ensure_daily_login_mail(player["id"], now)
             self.identity.ensure_hero_choice_mail(player["id"], now)
+            self.identity.ensure_ultimate_causality_mail(player["id"], now)
+            self.identity.ensure_revival_supply_mail(player["id"], now)
         context.session.session_id = secrets.token_urlsafe(24)
         context.session.player_id = player["id"]
         result: dict[str, Any] = {"code": 10, "id": player["id"], "loginCount": player["login_count"],
@@ -161,11 +164,21 @@ class LoginService:
         values.update(snapshot_fields(store, player["id"], snapshot,
                                      int(time.time()) if now is None else now))
         from .world_boss import snapshot_fields as boss_snapshot_fields
-        boss_fields, boss_daily = boss_snapshot_fields(store, player['id'],
+        boss_fields, boss_daily = boss_snapshot_fields(store, player["id"],
             int(time.time()) if now is None else now)
         values.update(boss_fields)
         if boss_daily:
             values['Daily'] = values.get('Daily', b'') + boss_daily
+        if store is not None and store.db.execute("SELECT 1 FROM sqlite_master WHERE name='college_state'").fetchone():
+            college_row = store.db.execute('SELECT state_json FROM college_state WHERE player_id=?', (player['id'],)).fetchone()
+            if college_row:
+                from .college_pray import daily_fields
+                values['Daily'] = values.get('Daily', b'') + daily_fields(json.loads(college_row[0]),
+                    int(time.time()) if now is None else int(now))
+        # REVIVAL_COMPAT 2026-10-02: CollegeModule.IsCollegeEnable (0x1AF9FF8)
+        # enables the base entry only when PlayerData.ModuleStatus.GrowthBaseStatus
+        # == 1; the official server value is unrecoverable, keep the module open.
+        values["ModuleStatus"] = MODULE_STATUS.encode({"GrowthBaseStatus": 1})
         if store is not None:
             relic_ids = relic_item_ids()
             owned_relics = [item_id for item_id, quantity in store.db.execute(
@@ -196,6 +209,8 @@ class LoginService:
         welcome_created = self.identity.ensure_welcome_mail(player["id"], now) if self.mail else False
         daily_created = self.identity.ensure_daily_login_mail(player["id"], now) if self.mail else False
         choice_created = self.identity.ensure_hero_choice_mail(player["id"], now) if self.mail else False
+        causality_created = self.identity.ensure_ultimate_causality_mail(player["id"], now) if self.mail else False
+        supply_created = self.identity.ensure_revival_supply_mail(player["id"], now) if self.mail else False
         daily_granted = self.gift_packages.settle_daily(player["id"]) if self.gift_packages else False
         # Same-process reconnect keeps the authenticated transport session supplied
         # by the client; a fresh login is required after identity-service restart.
@@ -203,7 +218,7 @@ class LoginService:
             context.session.session_id = secrets.token_urlsafe(24)
         LOGGER.info("authenticated reconnect player=%s", player["id"])
         pushes = self.economy.pushes(player["id"]) if daily_granted and self.economy else ()
-        if welcome_created or daily_created or choice_created:
+        if welcome_created or daily_created or choice_created or causality_created or supply_created:
             pushes += (self.mail.list_message(player["id"]),)
         return OutboundMessage("L2C_ReConnect", {"code": 10, "id": player["id"],
             "serverTime": now}, pushes=pushes)
@@ -217,7 +232,8 @@ class LoginService:
         recovery_seconds = (self.economy.POWER_RECOVER_SECONDS if self.economy is not None
                             else EconomyService.POWER_RECOVER_SECONDS)
         pairs = [STRING_PAIR.encode({"key": "PowerBuyNum", "val": "120"}),
-                 STRING_PAIR.encode({"key": "PowerRecover", "val": str(recovery_seconds)})]
+                 STRING_PAIR.encode({"key": "PowerRecover", "val": str(recovery_seconds)}),
+                 STRING_PAIR.encode({"key": "Energy", "val": "600"})]
         LOGGER.info("server configuration response prepared with %s-second power recovery",
                     recovery_seconds)
         return OutboundMessage("L2C_ServerTableConfig", {"code": 10, "keyVal": pairs})

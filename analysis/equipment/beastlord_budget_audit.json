@@ -1,0 +1,404 @@
+{
+  "sources": {
+    "SectionTable": {
+      "source": "assets/bin/Data/cca5f3cc8525b59459bdebf586c887fb",
+      "record_count": 3203,
+      "fields": [
+        "SectionID",
+        "NextSectionID",
+        "SectionNumberID",
+        "NumerChina",
+        "GameplayNotice",
+        "Maps",
+        "ChapterID",
+        "Type",
+        "CollisionDetectionRadius",
+        "IfBossBattle",
+        "Name",
+        "NameChina",
+        "NameMore",
+        "NameMoreChina",
+        "ChallengeName",
+        "ChallengeDesc",
+        "ChallengeReward1",
+        "StageIcon",
+        "LevelDisplay",
+        "RecommendedAbility",
+        "RecommendedLevel",
+        "DifficultyLevel",
+        "Profession",
+        "EnemyDisplay",
+        "DroopLimit",
+        "DroopLimit2",
+        "DroopLimit3",
+        "DroopDisplay",
+        "DroopDisplayProbability",
+        "OpenType",
+        "OpenParam",
+        "HeroLimit",
+        "TimeLimit",
+        "StartParam",
+        "WinCondition",
+        "WinParam",
+        "ExitCountDown",
+        "FailCondition",
+        "FailParam",
+        "FailTips",
+        "AgainSwitch",
+        "FailShowSwitch",
+        "Open",
+        "ManualValue",
+        "FirVReward",
+        "ExpertChestReward",
+        "ChestReward",
+        "VReward",
+        "MopReward",
+        "DropValueID",
+        "SectionRelicList",
+        "PlayerPassive",
+        "MonsterPassive",
+        "GoblinRate",
+        "GoblinIdList",
+        "GoblinChance",
+        "AssistType",
+        "AssistParam",
+        "BehaviorManager",
+        "IsAutoFightMode",
+        "AutoFightCondition",
+        "ContinueFightID",
+        "ContinueFightConsume",
+        "AutoFightMode",
+        "ChangeSceneColor",
+        "ChangeSceneFog",
+        "IsSeriesSection",
+        "IsShowWinTips",
+        "IsSaveGame",
+        "Favorability",
+        "PlotReviewBackground",
+        "PlotReviewStoryID",
+        "PlotReviewDesc",
+        "GamePlayType",
+        "GamePlayValue",
+        "GamePlayValue2",
+        "SwitchValue",
+        "BattlepassEquib",
+        "BattlepassEquibInto",
+        "StartLevelByItem"
+      ]
+    },
+    "Item": {
+      "source": "assets/bin/Data/e49ddfae661db9147b8823552f01df41",
+      "record_count": 3026,
+      "fields": [
+        "ItemID",
+        "NameID",
+        "DescID",
+        "HistoryID",
+        "ItemUseScence",
+        "ItemType",
+        "ItemQuality",
+        "PileCount",
+        "ItemValue",
+        "AddADCGroup",
+        "IMQualityLevel",
+        "DropLimit",
+        "DropLimitParam",
+        "NeedLevel",
+        "ItemShow",
+        "Used",
+        "Purchased",
+        "Gain",
+        "Composed",
+        "Recover",
+        "FunctionEff",
+        "EffData",
+        "Return",
+        "Icon",
+        "EffectIcon",
+        "Model",
+        "Effect",
+        "IfShowName",
+        "DropSound",
+        "PickSound",
+        "QuickBuyID"
+      ]
+    }
+  },
+  "official_budget_values": "SERVER_DATA_LOST",
+  "policy": "USER_DECISION 2026-09-26 LOW=1000/MID=3000/HIGH=5000 per group",
+  "native_consumer": "JudgeDropItem 0x1e49838: cumulative weighted value <= dropValues[AddADCGroup]",
+  "rows": [
+    {
+      "section_id": 2133101,
+      "name": "群星跃迁之时·新月",
+      "advertised_percent": 100,
+      "difficulty": 1,
+      "quality_band": [
+        1,
+        3
+      ],
+      "drop_value_id": 10633101,
+      "beastlord_group": 5,
+      "budget": 1000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "section_id": 2133102,
+      "name": "群星跃迁之时·娥眉月",
+      "advertised_percent": 106,
+      "difficulty": 2,
+      "quality_band": [
+        1,
+        3
+      ],
+      "drop_value_id": 10633102,
+      "beastlord_group": 5,
+      "budget": 1000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "section_id": 2133103,
+      "name": "群星跃迁之时·上弦月",
+      "advertised_percent": 113,
+      "difficulty": 3,
+      "quality_band": [
+        1,
+        4
+      ],
+      "drop_value_id": 10633103,
+      "beastlord_group": 5,
+      "budget": 1000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "section_id": 2133104,
+      "name": "群星跃迁之时·九夜月",
+      "advertised_percent": 121,
+      "difficulty": 4,
+      "quality_band": [
+        1,
+        4
+      ],
+      "drop_value_id": 10633104,
+      "beastlord_group": 5,
+      "budget": 3000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        3,
+        3,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "section_id": 2133105,
+      "name": "群星跃迁之时·满月",
+      "advertised_percent": 131,
+      "difficulty": 5,
+      "quality_band": [
+        1,
+        5
+      ],
+      "drop_value_id": 10633105,
+      "beastlord_group": 5,
+      "budget": 3000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        3,
+        3,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "section_id": 2133106,
+      "name": "群星跃迁之时·既望月",
+      "advertised_percent": 143,
+      "difficulty": 6,
+      "quality_band": [
+        2,
+        5
+      ],
+      "drop_value_id": 10633106,
+      "beastlord_group": 5,
+      "budget": 3000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        3,
+        3,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "section_id": 2133107,
+      "name": "群星跃迁之时·下弦月",
+      "advertised_percent": 158,
+      "difficulty": 7,
+      "quality_band": [
+        2,
+        6
+      ],
+      "drop_value_id": 10633107,
+      "beastlord_group": 5,
+      "budget": 5000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        5,
+        5,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "section_id": 2133108,
+      "name": "群星跃迁之时·残月",
+      "advertised_percent": 177,
+      "difficulty": 8,
+      "quality_band": [
+        2,
+        6
+      ],
+      "drop_value_id": 10633108,
+      "beastlord_group": 5,
+      "budget": 5000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        5,
+        5,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "section_id": 2133109,
+      "name": "群星跃迁之时·晦月",
+      "advertised_percent": 200,
+      "difficulty": 9,
+      "quality_band": [
+        2,
+        6
+      ],
+      "drop_value_id": 10633109,
+      "beastlord_group": 5,
+      "budget": 5000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        5,
+        5,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "section_id": 2133110,
+      "name": "群星跃迁之时·血月",
+      "advertised_percent": 440,
+      "difficulty": 10,
+      "quality_band": [
+        3,
+        6
+      ],
+      "drop_value_id": 10633110,
+      "beastlord_group": 5,
+      "budget": 5000,
+      "six_star_item_value_costs": [
+        900,
+        1000,
+        1050,
+        1100,
+        1200
+      ],
+      "six_star_only_count_caps": [
+        5,
+        5,
+        4,
+        4,
+        4
+      ]
+    }
+  ],
+  "conclusion": "Blood moon and Hui moon both cap group 5 at 5000. This cap does not represent a 440/200 yield ratio; actual counts depend on client candidate rolls, stars, values and kills. No difficulty multiplier is added by the server.",
+  "budget_change": "none; exact official values are unknown and the existing tier policy is user-approved"
+}
