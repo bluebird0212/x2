@@ -220,6 +220,8 @@ class EconomyService:
         self.endless = EndlessService(self)
         from .world_boss import WorldBossService
         self.world_boss = WorldBossService(self)
+        from .element_compose import ElementComposeService
+        self.element_compose = ElementComposeService(self)
         from .pending_delivery import recover
         for row in store.db.execute("SELECT id FROM players").fetchall():
             recover(self, row[0])
@@ -1250,7 +1252,7 @@ class EconomyService:
     def handlers(self):
         from .bag_items import BagItemService
         from .medals import MedalService
-        return {**self.world_boss.handlers(), **self.endless.handlers(), **MedalService(self).handlers(), **BagItemService(self.store, self).handlers(), **self.achievements.handlers(),
+        return {**self.world_boss.handlers(), **self.endless.handlers(), **self.element_compose.handlers(), **MedalService(self).handlers(), **BagItemService(self.store, self).handlers(), **self.achievements.handlers(),
                 "C2L_FetchMobilityPower": self.fetch_mobility_power,
                 **{name: self.handle for name in ("C2L_ItemAll", "C2L_ItemOpt", "C2L_ShopGoods", "C2L_RefreshShop", "C2L_BuyGoods",
             "C2L_QueryGoodsInfo", "C2L_GameTask", "C2L_DailyAndWeekTask", "C2L_FinishGameTask",
