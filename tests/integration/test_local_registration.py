@@ -219,8 +219,8 @@ def test_tcp_login_creates_daily_mail_once_after_registration(tmp_path):
         context = DispatchContext("test", "local", SessionState("test"))
         response = asyncio.run(service.login(context, request))
         assert response.values["code"] == 10
-        assert next(push for push in response.pushes if push.message_name == "L2C_MailData").values["total"] == 2
-    assert flow.store.db.execute("SELECT count(*) FROM player_mail").fetchone()[0] == 2
+        assert next(push for push in response.pushes if push.message_name == "L2C_MailData").values["total"] == 5
+    assert flow.store.db.execute("SELECT count(*) FROM player_mail").fetchone()[0] == 5
 
 
 def test_reconnect_creates_and_pushes_daily_mail_once(tmp_path):
@@ -235,11 +235,11 @@ def test_reconnect_creates_and_pushes_daily_mail_once(tmp_path):
     context = DispatchContext("test", "local", SessionState("test"))
     first = asyncio.run(service.reconnect(context, request))
     assert first.values["code"] == 10
-    assert next(push for push in first.pushes if push.message_name == "L2C_MailData").values["total"] == 2
+    assert next(push for push in first.pushes if push.message_name == "L2C_MailData").values["total"] == 5
     second = asyncio.run(service.reconnect(context, request))
     assert second.values["code"] == 10
     assert not any(push.message_name == "L2C_MailData" for push in second.pushes)
-    assert flow.store.db.execute("SELECT count(*) FROM player_mail").fetchone()[0] == 2
+    assert flow.store.db.execute("SELECT count(*) FROM player_mail").fetchone()[0] == 5
 
 
 def test_http_mail_page_uses_game_token_and_isolates_accounts(tmp_path):
@@ -256,8 +256,8 @@ def test_http_mail_page_uses_game_token_and_isolates_accounts(tmp_path):
             json.dumps(args).encode(), authorization="Bearer " + token)
         return response.status, json.loads(response.body)
     status, result = query(first["token"])
-    assert status == 200 and result["data"]["total"] == 2
-    assert len(result["data"]["mails"]) == 2
+    assert status == 200 and result["data"]["total"] == 5
+    assert len(result["data"]["mails"]) == 5
     assert json.loads(result["data"]["mails"][0]["attachment"])["attachment"]
     assert query(second["token"])[0] == 403
     assert query("invalid")[0] == 401
@@ -279,7 +279,7 @@ def test_real_client_bare_bearer_mail_resolves_database_user(tmp_path):
     response = query("/MailService.GetMailPage", args)
     assert response.status == 200
     data = json.loads(response.body)
-    assert data["code"] == 0 and data["data"]["total"] == 1
+    assert data["code"] == 0 and data["data"]["total"] == 4
     mail_id = data["data"]["mails"][0]["id"]
     detail = query("/MailService.GetMail", {
         "appid": args["appid"], "userid": args["userid"], "id": mail_id})
@@ -322,8 +322,8 @@ def test_bare_bearer_mail_over_http_after_authenticated_tcp_login(tmp_path):
                 with urlopen(req, timeout=3) as response:
                     return response.status, json.load(response)
             status, body = await asyncio.to_thread(request)
-            assert status == 200 and body["data"]["total"] == 1
-            assert len(body["data"]["mails"]) == 1
+            assert status == 200 and body["data"]["total"] == 4
+            assert len(body["data"]["mails"]) == 4
             writer.close()
             await writer.wait_closed()
         finally:

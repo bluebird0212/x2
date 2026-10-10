@@ -28,6 +28,10 @@ class LobbyService:
         if context.session.player_id is None:
             raise ProtocolError("lobby query requested before login")
         name = CORE_MESSAGE_REGISTRY.name_for(packet.message_id)
+        if name == "C2L_UnlockStory":
+            # EconomyService owns this mutation in production. Standalone lobby
+            # servers must refuse it instead of indexing an absent query schema.
+            return OutboundMessage("L2C_UnlockStory", {"code": 13})
         request = LOBBY_SCHEMAS[name].decode(packet.body)
         if name == "C2L_QueryGrowthBase":
             growth = (self.college.growth_base(context.session.player_id)

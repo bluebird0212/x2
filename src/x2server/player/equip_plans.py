@@ -13,6 +13,11 @@
 的 id 继续下发一次（``val`` 缺席）才能让它把本地那条抹掉。见 messages/equip_plan.py。
 """
 import logging
+import hashlib
+import json
+import sqlite3
+from contextlib import contextmanager
+from .store import validate_snapshot
 
 from x2server.messages.equip_plan import (EQUIP_PLAN, EQUIP_PLAN_SCHEMAS, PLAN,
                                           PLAN_ENTRY, PLAN_POS)
@@ -57,10 +62,11 @@ def snapshot_value(snapshot):
             "Val": PLAN.encode({
                 "Name": plan.get("name", ""),
                 "SetTopTime": int(plan.get("set_top_time", 0)),
-                "Position": [PLAN_POS.encode({"Key": int(slot), "Value": int(equip_id)})
-                             for slot, equip_id in sorted(
-                                 (plan.get("positions") or {}).items(),
-                                 key=lambda pair: int(pair[0]))],
+                # Native Merge is incremental: idx without val removes a slot.
+                "Position": [PLAN_POS.encode(
+                    {"Key": slot, "Value": int(plan["positions"][str(slot)])}
+                    if str(slot) in (plan.get("positions") or {}) else {"Key": slot})
+                    for slot in range(6)],
             }),
         }))
     known = {int(plan_id) for plan_id in plans}
@@ -78,23 +84,78 @@ class EquipPlanService:
         # 都由 EquipmentService 提供。可选，缺省时 UseEquipPlan 只做槽位自洽的应用。
         self.equipment = equipment
         self.clock = clock or ServerClock()
+        with store.db:
+            store.db.execute("""CREATE TABLE IF NOT EXISTS equip_plan_receipts (
+                request_key TEXT PRIMARY KEY, player_id INTEGER NOT NULL,
+                response_name TEXT NOT NULL, response BLOB NOT NULL)""")
+
+    @contextmanager
+    def transaction(self):
+        self.store.db.execute("SAVEPOINT equip_plan_operation")
+        try:
+            yield
+        except BaseException:
+            self.store.db.execute("ROLLBACK TO equip_plan_operation")
+            self.store.db.execute("RELEASE equip_plan_operation")
+            raise
+        else:
+            self.store.db.execute("RELEASE equip_plan_operation")
+
+    def save_snapshot(self, player_id, snapshot, revision):
+        validate_snapshot(snapshot)
+        updated = self.store.db.execute(
+            "UPDATE players SET snapshot=?,revision=revision+1 WHERE id=? AND revision=?",
+            (json.dumps(snapshot, ensure_ascii=False, allow_nan=False, sort_keys=True),
+             player_id, revision))
+        if updated.rowcount != 1:
+            raise ValueError("player revision conflict")
 
     def handlers(self):
         return {name: self.handle for name in EQUIP_PLAN_SCHEMAS if name.startswith("C2L_")}
 
     async def handle(self, context, packet):
+        try:
+            return await self._handle(context, packet)
+        except (sqlite3.Error, ValueError):
+            LOGGER.exception("equip plan operation rolled back")
+            name = CORE_MESSAGE_REGISTRY.name_for(packet.message_id).replace('C2L_', 'L2C_', 1)
+            return OutboundMessage(name, {"code": 13})
+
+    async def _handle(self, context, packet):
         player_id = context.session.player_id
         if player_id is None:
             raise ProtocolError("equip plan requested before login")
         name = CORE_MESSAGE_REGISTRY.name_for(packet.message_id)
         request = EQUIP_PLAN_SCHEMAS[name].decode(packet.body)
-        if name == "C2L_UpdateEquipPlan":
-            return self.save(player_id, request)
-        if name == "C2L_SetTopEquipPlan":
-            return self.set_top(player_id, request)
-        if name == "C2L_DelEquipPlan":
-            return self.delete(player_id, request)
-        return self.use(player_id, request)
+        key = hashlib.sha256(
+            f"{player_id}:{context.session.session_id}:{packet.header.request_id}:{name}".encode()
+            + packet.body).hexdigest()
+        with self.transaction():
+            cached = self.store.db.execute(
+                "SELECT response_name,response FROM equip_plan_receipts WHERE request_key=? AND player_id=?",
+                (key, player_id)).fetchone()
+            if cached:
+                # Replay the acknowledgement but synchronize current state, never
+                # restore an obsolete preset or hero loadout from the receipt.
+                return OutboundMessage(cached[0], EQUIP_PLAN_SCHEMAS[cached[0]].decode(cached[1]),
+                                       before_response=self.sync(player_id))
+            action = {"C2L_UpdateEquipPlan": self.save, "C2L_SetTopEquipPlan": self.set_top,
+                      "C2L_DelEquipPlan": self.delete, "C2L_UseEquipPlan": self.use}[name]
+            response = action(player_id, request)
+            if response.values["code"] == 10:
+                self.store.db.execute("INSERT INTO equip_plan_receipts VALUES (?,?,?,?)",
+                    (key, player_id, response.message_name,
+                     EQUIP_PLAN_SCHEMAS[response.message_name].encode(response.values)))
+            return response
+
+    def sync(self, player_id):
+        snapshot = self.store.get(player_id)["snapshot"]
+        pushes = (OutboundMessage("L2C_HeroUpdate", {"code": 10,
+                    "heros": [encode_hero_data(h) for h in snapshot.get("heroes", [])]}),)
+        if self.equipment is not None:
+            pushes += (OutboundMessage("L2C_EquipUpdate", {"code": 10,
+                       "equip": self.equipment.values(player_id)["equip"]}),)
+        return pushes + (self.snapshot_push(player_id),)
 
     def owned_equipment(self, player_id):
         return {int(row[0]): int(row[1]) for row in self.store.db.execute(
@@ -112,23 +173,38 @@ class EquipPlanService:
         预设也不会复用它的 id）。
         """
         plan_id = int(request.get("planId", 0))
+        reject = OutboundMessage("L2C_UpdateEquipPlan", {"code": 13, "planId": plan_id})
+        if not 0 <= plan_id < MAX_PLAN_ID:
+            return reject
         owned = self.owned_equipment(player_id)
         positions = {}
         for raw in request.get("pos", []):
             entry = PLAN_POS.decode(raw)
             slot = int(entry.get("Key", 0))
             equip_id = int(entry.get("Value", 0))
-            if slot < 0 or equip_id <= 0 or equip_id not in owned:
-                continue
+            if not 0 <= slot < 6 or str(slot) in positions or equip_id in positions.values():
+                return reject
+            if equip_id == 0:
+                continue  # An explicitly empty slot is valid, not an equipment.
+            if equip_id < 0 or equip_id not in owned:
+                return reject
+            parts = getattr(self.equipment, "parts", None)
+            if parts is not None and parts.get(owned[equip_id], 0) - 1 != slot:
+                return reject
             positions[str(slot)] = equip_id
         player = self.store.get(player_id)
         snapshot = player["snapshot"]
         current = state(snapshot)
-        if plan_id <= 0:
-            plan_id = int(current["next_id"])
+        if plan_id == 0:
+            plan_id = max(1, int(current["next_id"]))
+            used = {int(i) for i in current["plans"]} | {int(i) for i in current["deleted"]}
+            while plan_id in used and plan_id < MAX_PLAN_ID:
+                plan_id += 1
+            if plan_id >= MAX_PLAN_ID:
+                return reject
             current["next_id"] = plan_id + 1
-        elif plan_id >= MAX_PLAN_ID:
-            return OutboundMessage("L2C_UpdateEquipPlan", {"code": 13, "planId": plan_id})
+        else:
+            current["next_id"] = max(int(current["next_id"]), plan_id + 1)
         previous = current["plans"].get(str(plan_id)) or {}
         current["plans"][str(plan_id)] = {
             "name": request.get("name", "") or "",
@@ -136,7 +212,7 @@ class EquipPlanService:
             "positions": positions,
         }
         current["deleted"] = [i for i in current["deleted"] if int(i) != plan_id]
-        self.store.save_snapshot(player_id, snapshot, player["revision"])
+        self.save_snapshot(player_id, snapshot, player["revision"])
         LOGGER.info("equip plan saved player=%s id=%s slots=%s name=%s",
                     player_id, plan_id, len(positions), current["plans"][str(plan_id)]["name"])
         # 客户端一处理完这个回包就会重画预设页，所以带字段 9 的 PlayerDataProto 必须
@@ -160,7 +236,7 @@ class EquipPlanService:
         if plan is None:
             return OutboundMessage("L2C_SetTopEquipPlan", {"code": 13, "planId": plan_id})
         plan["set_top_time"] = int(self.clock.now()) if is_top else 0
-        self.store.save_snapshot(player_id, snapshot, player["revision"])
+        self.save_snapshot(player_id, snapshot, player["revision"])
         LOGGER.info("equip plan top player=%s id=%s isTop=%s", player_id, plan_id, is_top)
         # 同 save：置顶时间在字段 9 里，客户端要在回包之前就看到新排序。
         return OutboundMessage("L2C_SetTopEquipPlan", {"code": 10, "planId": plan_id},
@@ -178,10 +254,15 @@ class EquipPlanService:
         player = self.store.get(player_id)
         snapshot = player["snapshot"]
         current = state(snapshot)
+        if str(plan_id) not in current["plans"]:
+            if plan_id not in current["deleted"]:
+                return OutboundMessage("L2C_DelEquipPlan", {"code": 13, "planId": plan_id})
+            return OutboundMessage("L2C_DelEquipPlan", {"code": 10, "planId": plan_id},
+                                   before_response=(self.snapshot_push(player_id),))
         current["plans"].pop(str(plan_id), None)
         if plan_id not in [int(i) for i in current["deleted"]]:
             current["deleted"].append(plan_id)
-        self.store.save_snapshot(player_id, snapshot, player["revision"])
+        self.save_snapshot(player_id, snapshot, player["revision"])
         LOGGER.info("equip plan deleted player=%s id=%s", player_id, plan_id)
         # 同 save：删除墓碑也要在回包之前随字段 9 下发，列表才会立刻少一条。
         return OutboundMessage("L2C_DelEquipPlan", {"code": 10, "planId": plan_id},
@@ -212,22 +293,22 @@ class EquipPlanService:
         for slot, equip_id in sorted((plan.get("positions") or {}).items(),
                                      key=lambda pair: int(pair[0])):
             type_id = owned.get(int(equip_id))
-            if type_id is None:
-                continue
+            if type_id is None or not 0 <= int(slot) < 6 or any(e["equip_id"] == int(equip_id) for e in worn):
+                return OutboundMessage("L2C_UseEquipPlan", values)
             # 没有部件表 (测试替身) 时跳过槽位校验，只要求装备属于本玩家。
             if parts is not None and parts.get(type_id, 0) - 1 != int(slot):
-                continue
+                return OutboundMessage("L2C_UseEquipPlan", values)
             worn.append({"position": int(slot), "equip_id": int(equip_id)})
         if not worn:
             return OutboundMessage("L2C_UseEquipPlan", values)
         ids = {e["equip_id"] for e in worn}
-        slots = {e["position"] for e in worn}
         for other in snapshot.get("heroes", []):
             other["equips"] = [e for e in other.get("equips", [])
                                if e["equip_id"] not in ids]
-        hero["equips"] = [e for e in hero.get("equips", []) if e["position"] not in slots]
-        hero["equips"].extend(worn)
-        self.store.save_snapshot(player_id, snapshot, player["revision"])
+        # A preset is the complete saved loadout; saved empty slots unequip the
+        # target's previous pieces as well, rather than leaving half another set.
+        hero["equips"] = worn
+        self.save_snapshot(player_id, snapshot, player["revision"])
         values["code"] = 10
         LOGGER.info("equip plan used player=%s id=%s hero=%s equips=%s",
                     player_id, plan_id, hero_id, len(worn))

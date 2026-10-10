@@ -71,3 +71,36 @@ def test_request_shop_persists_run_and_answers_chapter_relics(env):
         {"itemID": item["itemId"], "itemNum": 999999, "sectionId": SECTION},
         name="C2L_BuyInsideBattleShopItems")))
     assert bought.values["result"] == 10
+
+
+def test_shop_refuses_outside_run_and_wrong_section(env):
+    store, economy, ctx = env
+    service = BattleShopService(store, economy)
+    def open_shop(section):
+        return asyncio.run(service.request_shop(ctx, packet(
+            {"shopID":SHOP,"level":FLOOR,"sectionId":section},
+            name="C2L_RequestInsideBattleShop")))
+    assert open_shop(SECTION).values['result'] == 13
+    with store.db:
+        store.db.execute("INSERT INTO economy_runs (uuid,player_id,session_id,section_id,settled) VALUES ('run-dark',1,'s',?,0)",(SECTION,))
+    assert open_shop(2110801).values['result'] == 13
+    assert open_shop(0).values['result'] == 10
+    assert store.db.execute('SELECT section_id FROM battle_shop_visits').fetchone()[0] == SECTION
+
+
+def test_old_shop_visit_cannot_buy_in_new_run(env):
+    store, economy, ctx = env
+    service = BattleShopService(store, economy)
+    with store.db:
+        store.db.execute("INSERT INTO economy_runs (uuid,player_id,session_id,section_id,settled) VALUES ('old',1,'s',?,0)",(SECTION,))
+    asyncio.run(service.request_shop(ctx, packet(
+        {'shopID':SHOP,'level':FLOOR,'sectionId':SECTION},name='C2L_RequestInsideBattleShop')))
+    item = service.stock(SHOP,FLOOR,'1:old',2010500)[0]['itemId']
+    with store.db:
+        store.db.execute("UPDATE economy_runs SET settled=1 WHERE uuid='old'")
+        store.db.execute("INSERT INTO economy_runs (uuid,player_id,session_id,section_id,settled) VALUES ('new',1,'s',?,0)",(SECTION,))
+    before = store.db.execute('SELECT COUNT(*) FROM battle_shop_purchases').fetchone()[0]
+    result = asyncio.run(service.buy(ctx,packet(
+        {'itemID':item,'itemNum':999999,'sectionId':SECTION},name='C2L_BuyInsideBattleShopItems')))
+    assert result.values['result'] == 13
+    assert store.db.execute('SELECT COUNT(*) FROM battle_shop_purchases').fetchone()[0] == before

@@ -1,6 +1,8 @@
 {
   "provenance": "Shop 804 月钻兑换: the client's own six 随机兽主 cards (goods 1912<part>01, item 120910<part>, priced 210/180/130/135/150/165 in 月钻 = ShopResourceType 912 = item 1237912). The card fixes the equipment part; the suit and the star are rolled server-side, so each slot carries that part's pool of valid suit type_ids. The pool covers the 18 active suits only (deprecated/unnamed 407/408 excluded) and matches the equipment factory's set, so 狮鹫(402) part 6 = 1240026 is back. Unlimited stock.",
   "shopId": 804,
+  "starWeights": {"3": 1, "4": 1, "5": 1, "6": 1},
+  "starWeightSource": "Revival compatibility: PR13 uniform 3..6 retained; official weights unknown",
   "goods": [
     {
       "goodsId": 1912101,

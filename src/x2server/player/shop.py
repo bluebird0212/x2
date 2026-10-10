@@ -55,6 +55,10 @@ class ShopService:
             "data/random_shop_801.json").read_text(encoding="utf-8"))
         equib_shop = json.loads(files("x2server").joinpath(
             "data/random_shop_804.json").read_text(encoding="utf-8"))
+        self.equib_star_weights = {int(star): weight for star, weight in equib_shop["starWeights"].items()}
+        if (set(self.equib_star_weights) != {3, 4, 5, 6}
+                or any(type(weight) is not int or weight <= 0 for weight in self.equib_star_weights.values())):
+            raise ValueError("shop 804 star weights invalid")
         compat = {"shops": {"801": random_shop["goods"], "804": equib_shop["goods"]}}
         self.retired_shop_ids = set(range(801, 812)) - {self.SHOP_ID, 801, 804}
         self.compat_offers = {}
@@ -407,13 +411,15 @@ class ShopService:
         """804 月钻兑换: roll one instance per purchase, honouring the card's part.
 
         The card fixes the part (its pool only holds that part's type_ids); the suit
-        is uniform over the pool and the star is uniform 3..6, matching the live shop.
+        is uniform over the pool; star weights are explicit Revival compatibility
+        configuration, not recovered official probabilities.
         """
         run_uuid = f"compat-shop:{key}"
         equips = []
         for ordinal in range(buy_num):
             type_id = pool[random.randrange(len(pool))]
-            star = random.choice((3, 4, 5, 6))
+            star = random.choices(tuple(self.equib_star_weights),
+                                  weights=tuple(self.equib_star_weights.values()), k=1)[0]
             instances = materialize_instances(self.store.db, player_id, type_id, star, 1,
                                               run_uuid, self.economy.equipment_factory, ordinal)
             for instance in instances:

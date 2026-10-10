@@ -364,7 +364,10 @@ class BattleService:
         # add another full allowance. The client retains its cumulative ledger.
         saved_drop = DROP_DATA.decode(FIGHT_DATA.decode(entry['data'])['dropData'])
         drop_values = saved_drop.get('dropValues', [])
-        if saved_drop.get('missionId') != section or len(drop_values) != 27 or any(value < 0 for value in drop_values):
+        from .drop_budget import GROUP_COUNT, LEGACY_GROUP_COUNT
+        if (saved_drop.get('missionId') != section
+                or len(drop_values) not in (LEGACY_GROUP_COUNT, GROUP_COUNT)
+                or any(value < 0 for value in drop_values)):
             return reject_with('invalid saved budget')
         tier, known = self.drop_budget.tier_for(section)
         logging.getLogger("x2.battle").info(

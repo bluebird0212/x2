@@ -19,7 +19,10 @@ import json
 from importlib.resources import files
 
 TIER_BUDGETS = {"LOW": 1000, "MID": 3000, "HIGH": 5000}  # USER_DECISION 2026-09-26
-GROUP_COUNT = 27  # official AddADCGroup universe (Section.DroopLimit2 [0..26])
+LEGACY_GROUP_COUNT = 27
+GROUP_COUNT = 28  # Item includes 25 E_Outside rows in group 27 (13 story/gift).
+STORY_GROUP = 27
+STORY_GROUP_BUDGET = 3000  # Approved PR12 replacement; ItemValue is 1.
 BEASTLORD_GROUP = 5
 
 
@@ -29,7 +32,7 @@ class DropBudgetCompatibilityPolicy:
         self.difficulty_levels = {int(k): int(v) for k, v in (difficulty_levels or {}).items()}
         self.unknown_hits: set[int] = set()
         rules = json.loads(files('x2server').joinpath('data/beastlord_budget_rules.json').read_text(encoding='utf8'))
-        self.version = rules['version']
+        self.version = rules['version'] + ':story-27-v1'
         self.beastlord_budgets = {int(key): int(row['budget']) for key, row in rules['sections'].items()}
 
     def tier_for(self, section_id: int) -> tuple[str, bool]:
@@ -47,6 +50,7 @@ class DropBudgetCompatibilityPolicy:
     def budget_for(self, section_id: int) -> list[int]:
         tier, _ = self.tier_for(section_id)
         budgets = [TIER_BUDGETS[tier]] * GROUP_COUNT
+        budgets[STORY_GROUP] = STORY_GROUP_BUDGET
         section_id = int(section_id)
         if section_id in self.difficulty_levels and section_id in self.beastlord_budgets:
             budgets[BEASTLORD_GROUP] = self.beastlord_budgets[section_id]

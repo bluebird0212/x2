@@ -1,5 +1,7 @@
 """Persisted test equipment instances sent through the existing EquipAll protocol."""
 import json
+import hashlib
+import sqlite3
 import logging
 import random
 import secrets
@@ -31,6 +33,9 @@ class EquipmentService:
         self.exp_costs = {r["level"]: r for r in json.loads(progression.read_text(encoding="utf-8"))["level_rows"]}
         self.reclaim_stages = {r["Stage"]: r for r in json.loads(progression.read_text(encoding="utf-8"))["stage_rows"]}
         with store.db:
+            store.db.execute("""CREATE TABLE IF NOT EXISTS equipment_lock_receipts (
+                request_key TEXT PRIMARY KEY, player_id INTEGER NOT NULL,
+                response BLOB NOT NULL)""")
             # One canonical DDL for the 兽主 ledger, shared with the drop
             # materializer - see equipment_factory.ensure_equipment_instances.
             ensure_equipment_instances(store.db)
@@ -61,6 +66,13 @@ class EquipmentService:
         return OutboundMessage("L2C_EquipAll", self.values(context.session.player_id))
 
     async def lock(self, context, packet):
+        try:
+            return await self._lock(context, packet)
+        except sqlite3.Error:
+            logging.getLogger("x2.equipment").exception("equipment lock rolled back")
+            return OutboundMessage("L2C_LockEquip", {"code": 13})
+
+    async def _lock(self, context, packet):
         """Toggle 兽主锁定 (C2L_LockEquip 883 -> L2C_LockEquip 884).
 
         The client's request carries only ``equipID``, so the state is toggled rather
@@ -75,7 +87,21 @@ class EquipmentService:
         if not equip_id:
             return OutboundMessage("L2C_LockEquip", {"code": 13})
         transaction = self.economy.transaction() if self.economy is not None else self.store.db
+        key = hashlib.sha256(
+            f"{player_id}:{context.session.session_id}:{packet.header.request_id}:lock".encode()
+            + packet.body).hexdigest()
+        schema = EQUIPMENT_SCHEMAS["L2C_LockEquip"]
         with transaction:
+            cached = self.store.db.execute(
+                "SELECT response FROM equipment_lock_receipts WHERE request_key=? AND player_id=?",
+                (key, player_id)).fetchone()
+            if cached:
+                values = schema.decode(cached[0])
+                changed = next((e for e in self.values(player_id)["equip"]
+                                if HERO_EQUIP.decode(e)["id"] == equip_id), None)
+                if changed is None:
+                    return OutboundMessage("L2C_LockEquip", {"code": 13})
+                return OutboundMessage("L2C_LockEquip", {**values, "heroEquip": changed})
             row = self.store.db.execute(
                 "SELECT locked FROM equipment_instances WHERE player_id=? AND id=?",
                 (player_id, equip_id)).fetchone()
@@ -83,9 +109,12 @@ class EquipmentService:
                 return OutboundMessage("L2C_LockEquip", {"code": 13})
             self.store.db.execute("UPDATE equipment_instances SET locked=? WHERE player_id=? AND id=?",
                                   (0 if row[0] else 1, player_id, equip_id))
-        changed = next(e for e in self.values(player_id)["equip"]
-                       if HERO_EQUIP.decode(e)["id"] == equip_id)
-        return OutboundMessage("L2C_LockEquip", {"code": 10, "heroEquip": changed})
+            changed = next(e for e in self.values(player_id)["equip"]
+                           if HERO_EQUIP.decode(e)["id"] == equip_id)
+            values = {"code": 10, "heroEquip": changed}
+            self.store.db.execute("INSERT INTO equipment_lock_receipts VALUES (?,?,?)",
+                                  (key, player_id, schema.encode(values)))
+        return OutboundMessage("L2C_LockEquip", values)
 
     def handlers(self):
         return {"C2L_EquipAll": self.query_all,

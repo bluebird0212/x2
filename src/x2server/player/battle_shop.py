@@ -185,6 +185,13 @@ class BattleShopService:
             (player_id,)).fetchone()
         return row["uuid"] if row else ""
 
+    def current_run(self, player_id):
+        if not self.economy:
+            return None
+        return self.store.db.execute(
+            "SELECT uuid,section_id FROM economy_runs WHERE player_id=? AND settled=0 ORDER BY rowid DESC LIMIT 1",
+            (player_id,)).fetchone()
+
     # ---- handlers ---------------------------------------------------------
 
     def handlers(self):
@@ -202,7 +209,13 @@ class BattleShopService:
         request = BATTLE_SHOP_SCHEMAS["C2L_RequestInsideBattleShop"].decode(packet.body)
         shop_id, level = request.get("shopID", 0), request.get("level", 0)
         section = request.get("sectionId", 0)
-        run_id = self._current_run_id(player_id)
+        run = self.current_run(player_id)
+        if self.economy and (run is None or section not in (0, run["section_id"])):
+            return OutboundMessage("L2C_RequestInsideBattleShop",
+                                   {"result": REFUSED, "shopID": shop_id, "level": level})
+        if run is not None:
+            section = run["section_id"]
+        run_id = run["uuid"] if run is not None else ""
         chapter = self.chapter_for_section(section)
         offers = self.stock(shop_id, level, f"{player_id}:{run_id}", chapter)
         if offers is None:
@@ -256,6 +269,12 @@ class BattleShopService:
             LOGGER.info("in-battle purchase without an open shop item=%s player=%s",
                         item_id, player_id)
             return refuse
+        run = self.current_run(player_id)
+        if self.economy and (run is None or visit["run_id"] != run["uuid"]
+                            or visit["section_id"] != run["section_id"]
+                            or section not in (0, run["section_id"])):
+            return refuse
+        section = visit["section_id"]
         shop_id, level = visit["shop_id"], visit["level"]
         # Same seed and chapter the shop was opened with, so the offer list matches
         # the one the client is looking at even though it is re-rolled from the row.

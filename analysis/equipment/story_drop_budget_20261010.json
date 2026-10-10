@@ -1,0 +1,358 @@
+{
+  "source": "Official 2.4 Item table, full decoded row export",
+  "source_export_sha256": "ff09bc5dd7c159925d1e9b1ef7fc8b6d97aec6bd7b4f813cdce66dca50b4c6c3",
+  "group": 27,
+  "budget": 3000,
+  "items": [
+    {
+      "ItemID": 1101014,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1101017,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1101086,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 14,
+        "enum": "E_Gift"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1103005,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1107001,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1107002,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1108001,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1108002,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1108003,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1108004,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1109005,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1109010,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1141004,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 25,
+        "enum": "E_StoryItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290166,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290167,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290168,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290174,
+      "ItemValue": 1,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290333,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290334,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1290335,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1291003,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1291004,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1291005,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1291006,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    },
+    {
+      "ItemID": 1291007,
+      "ItemValue": 9999,
+      "AddADCGroup": 27,
+      "PileCount": 999,
+      "ItemType": {
+        "value": 33,
+        "enum": "E_ActivityItem"
+      },
+      "ItemUseScence": {
+        "value": 1,
+        "enum": "E_Outside"
+      }
+    }
+  ]
+}

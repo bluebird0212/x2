@@ -54,7 +54,7 @@ def test_seed_backs_up_preserves_progress_and_is_idempotent(tmp_path):
     ctx = DispatchContext("test", "local", SessionState("test", "session", player_id=1))
     equipped = asyncio.run(equipment.handle(ctx, packet({"equipID": first["id"], "heroID": 1003, "optType": 1}, 4, "C2L_DoEquip")))
     assert equipped.values["code"] == 10
-    hero_wire = HERO_DATA.decode(equipped.pushes[0].values["heros"][0])
+    hero_wire = HERO_DATA.decode(equipped.before_response[0].values["heros"][0])
     assert INT_PAIR.decode(hero_wire["equips"][0]) == {"Key": 0, "Value": first["id"]}
     assert HERO_EQUIP.decode(equipment.values(1)["equip"][0])["status"] == 1
     strengthened = asyncio.run(equipment.strengthen(ctx, packet({"equipID": first["id"]}, 5, "C2L_EquipStrengthen")))
